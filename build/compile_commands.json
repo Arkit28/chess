@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/projects/chess/build",
+  "command": "C:\\prog\\ucrt64\\bin\\g++.exe -g -std=gnu++20 -o CMakeFiles\\chess.dir\\src\\main.cpp.obj -c C:\\projects\\chess\\src\\main.cpp",
+  "file": "C:/projects/chess/src/main.cpp",
+  "output": "C:/projects/chess/build/CMakeFiles/chess.dir/src/main.cpp.obj"
+}
+]

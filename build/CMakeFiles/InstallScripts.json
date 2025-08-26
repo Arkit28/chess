@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/projects/chess/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
