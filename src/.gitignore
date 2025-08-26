@@ -1,0 +1,19 @@
+# Executable files
+*.exe
+*.out
+*.o
+*.obj
+
+# Precompiled headers
+*.gch
+*.pch
+
+# VSCode settings
+.vscode/
+
+# CMake build folders
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
