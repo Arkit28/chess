@@ -11,7 +11,7 @@ std::string EnumToChar(int square){
         case B_BISHOP:
             return "b";
         case B_KNIGHT:
-            return "h";
+            return "n";
         case B_ROOK:
             return "r";
         case B_QUEEN:
@@ -23,7 +23,7 @@ std::string EnumToChar(int square){
         case W_BISHOP:
             return "B";
         case W_KNIGHT:
-            return "H";
+            return "N";
         case W_ROOK:
             return "R";
         case W_QUEEN:
