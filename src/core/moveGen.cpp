@@ -303,7 +303,7 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     
     // add castling if conditions are met
     if(white){
-        if(b.castlingrights.W_QueenSide == true && b.squares[1] == EMPTY && b.squares[2] == EMPTY && b.squares[3]
+        if(b.castlingrights.W_QueenSide == true && b.squares[1] == EMPTY && b.squares[2] == EMPTY && b.squares[3] == EMPTY
            && !isSquareAttacked(b, 4, false)
            && !isSquareAttacked(b, 3, false)
            && !isSquareAttacked(b, 2, false)){
