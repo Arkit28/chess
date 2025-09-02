@@ -277,11 +277,9 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     int direction[8] = {1, -1, 8, -8, 7, -7, 9, -9};
 
     // TODO
-    //castling
+    // castling
     // conditions: king and rook havent moved since the start of the game 
     // and king hasnt been checked or is currently in check
-    
-
     for(int dir : direction){
         int target = square + dir;
         while(onBoard(target)){
@@ -294,6 +292,36 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
             else{
                 moves.push_back({square, target, b.squares[target], EMPTY, MoveFlags::CAPTURE});
             }
+        }
+    }
+    
+    // add castling if conditions are met
+    if(white){
+        if(b.castlingrights.W_QueenSide == true && b.squares[1] == EMPTY && b.squares[2] == EMPTY
+           && !isSquareAttacked(b, 0, false)
+           && !isSquareAttacked(b, 1, false)
+           && !isSquareAttacked(b, 2, false)){
+            moves.push_back({square, 2, b.squares[square], EMPTY, MoveFlags::CASTLING});
+        }
+        if(b.castlingrights.W_KingSide == true && b.squares[5] == EMPTY && b.squares[6] == EMPTY
+           && !isSquareAttacked(b, 5, false)
+           && !isSquareAttacked(b, 6, false)
+           && !isSquareAttacked(b, 7, false)){
+            moves.push_back({square, 6, b.squares[square], EMPTY, MoveFlags::CASTLING});
+        }
+    }
+    else{
+        if(b.castlingrights.B_KingSide == true && b.squares[57] == EMPTY && b.squares[58] == EMPTY
+           && !isSquareAttacked(b, 56, true)
+           && !isSquareAttacked(b, 57, true)
+           && !isSquareAttacked(b, 58, true)){
+            moves.push_back({square, 57, b.squares[square], EMPTY, MoveFlags::CASTLING});
+        }
+        if(b.castlingrights.B_KingSide == true && b.squares[61] == EMPTY && b.squares[62] == EMPTY
+           && !isSquareAttacked(b, 61, true)
+           && !isSquareAttacked(b, 52, true)
+           && !isSquareAttacked(b, 63, true)){
+            moves.push_back({square, 62, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
     }
 }

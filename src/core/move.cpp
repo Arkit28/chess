@@ -9,7 +9,7 @@ std::string Move::toString() const {
     s += rankChar(to);
 
     if(flags & PROMOTION){
-        s += 'q'; //default to queen promotion
+        s += 'q'; //default to queen promotion for now
     }
 
     return s;

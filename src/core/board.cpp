@@ -1,5 +1,6 @@
 #include "board.hpp"
 #include "utils.hpp"
+#include "move.hpp"
 #include <iostream>
 
 std::string EnumToChar(int square){
@@ -38,7 +39,7 @@ Board::Board() {
     squares.fill(EMPTY);
 }
 
-void Board::setStartPos() {
+void Board::setStartPos(Board& b) {
     squares[0] = W_ROOK;
     squares[1] = W_KNIGHT;
     squares[2] = W_BISHOP;
@@ -72,6 +73,9 @@ void Board::setStartPos() {
     squares[61] = B_BISHOP;
     squares[62] = B_KNIGHT;
     squares[63] = B_ROOK;
+
+    b.castlingrights = {true, true, true, true};
+
 }
 
 void Board::print() const {
@@ -118,3 +122,69 @@ std::string Board::toFEN() const{
     return fen;
 }
 
+// need to make CAPTURE + PROMOTION simultaneous  logic
+void Board::makeMove(Move& m){
+    // normal moves - Flag = QUIET
+    if(m.flags == QUIET || m.flags == DOUBLE_PAWN_PUSH){
+        squares[m.to] = squares[m.from];
+        squares[m.from] = EMPTY;
+    }
+    if(m.flags == CAPTURE){
+        squares[m.to] = squares[m.from];
+        squares[m.from] = EMPTY;
+    }
+    if(m.flags == PROMOTION){
+        if(squares[m.from] = W_PAWN){
+            squares[m.to] = W_QUEEN;          //to be changed
+            squares[m.from] = EMPTY;
+        }
+        else{
+            squares[m.to] = B_QUEEN;
+        }
+        squares[m.from] = EMPTY;
+    }
+    if(m.flags == CASTLING){
+        if(squares[m.to] = 2){
+            squares[m.to] = W_KING;
+            squares[3] = W_ROOK;
+            squares[m.from] = EMPTY;
+            squares[0] = EMPTY;
+        }
+        else if(squares[m.to] = 6){
+            squares[m.to] = W_KING;
+            squares[5] = W_ROOK;
+            squares[m.from] = EMPTY;
+            squares[7] = EMPTY;
+        }
+        else if(squares[m.to] = 58){
+            squares[m.to] = W_KING;
+            squares[59] = W_ROOK;
+            squares[m.from] = EMPTY;
+            squares[56] = EMPTY;
+        }
+        else if(squares[m.to] = 62){
+            squares[m.to] = W_KING;
+            squares[61] = W_ROOK;
+            squares[m.from] = EMPTY;
+            squares[63] = EMPTY;
+        }
+    }
+}
+
+
+
+void Board::UpdateCastlingRights(Move& m){
+    if(squares[m.from] == Piece::W_KING){
+        castlingrights.W_KingSide = false;
+        castlingrights.W_QueenSide = false;
+    }
+    if(squares[m.from] == Piece::B_KING){
+        castlingrights.B_KingSide = false;
+        castlingrights.B_QueenSide = false;
+    }
+
+    if(m.from == 0 || m.to == 0) castlingrights.W_KingSide = false;
+    if(m.from == 7 || m.to == 7) castlingrights.W_QueenSide = false;
+    if(m.from == 56 || m.to == 56) castlingrights.B_KingSide = false;
+    if(m.from == 63 || m.to == 63) castlingrights.B_QueenSide = false;
+}

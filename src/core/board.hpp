@@ -1,4 +1,5 @@
 #pragma once
+#include "move.hpp"
 #include <array>
 #include <string>
 
@@ -8,13 +9,25 @@ enum Piece{
     W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING,
 };
 
+struct CastlingRights {
+    bool W_KingSide;
+    bool W_QueenSide;
+    bool B_KingSide;
+    bool B_QueenSide;
+};
+
 class Board {
 public:
     std::array<int, 64> squares{};
 
     Board();
 
-    void setStartPos();
+    void makeMove(Move&);
+
+    CastlingRights castlingrights;
+    void UpdateCastlingRights(Move& m);
+
+    void setStartPos(Board& b);
     void print() const;
     std::string toFEN() const;
 };
