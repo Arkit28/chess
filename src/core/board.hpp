@@ -27,7 +27,7 @@ public:
     CastlingRights castlingrights;
     void UpdateCastlingRights(Move& m);
 
-    void setStartPos(Board& b);
+    void setStartPos();
     void print() const;
     std::string toFEN() const;
 };

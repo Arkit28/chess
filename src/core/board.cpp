@@ -39,7 +39,7 @@ Board::Board() {
     squares.fill(EMPTY);
 }
 
-void Board::setStartPos(Board& b) {
+void Board::setStartPos() {
     squares[0] = W_ROOK;
     squares[1] = W_KNIGHT;
     squares[2] = W_BISHOP;
@@ -74,7 +74,7 @@ void Board::setStartPos(Board& b) {
     squares[62] = B_KNIGHT;
     squares[63] = B_ROOK;
 
-    b.castlingrights = {true, true, true, true};
+    castlingrights = {true, true, true, true};
 
 }
 
@@ -134,7 +134,7 @@ void Board::makeMove(Move& m){
         squares[m.from] = EMPTY;
     }
     if(m.flags == PROMOTION){
-        if(squares[m.from] = W_PAWN){
+        if(squares[m.from] == W_PAWN){
             squares[m.to] = W_QUEEN;          //to be changed
             squares[m.from] = EMPTY;
         }
@@ -144,29 +144,35 @@ void Board::makeMove(Move& m){
         squares[m.from] = EMPTY;
     }
     if(m.flags == CASTLING){
-        if(squares[m.to] = 2){
+        if(squares[m.to] == 2){
             squares[m.to] = W_KING;
             squares[3] = W_ROOK;
             squares[m.from] = EMPTY;
             squares[0] = EMPTY;
+            castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
         }
-        else if(squares[m.to] = 6){
+        else if(squares[m.to] == 6){
             squares[m.to] = W_KING;
             squares[5] = W_ROOK;
             squares[m.from] = EMPTY;
-            squares[7] = EMPTY;
+            squares[7] = EMPTY;  
+            castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
+
         }
-        else if(squares[m.to] = 58){
+        else if(squares[m.to] == 58){
             squares[m.to] = W_KING;
             squares[59] = W_ROOK;
             squares[m.from] = EMPTY;
             squares[56] = EMPTY;
+            castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
         }
-        else if(squares[m.to] = 62){
+        else if(squares[m.to] == 62){
             squares[m.to] = W_KING;
             squares[61] = W_ROOK;
             squares[m.from] = EMPTY;
             squares[63] = EMPTY;
+            castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
+
         }
     }
 }

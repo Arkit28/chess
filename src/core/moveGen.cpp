@@ -109,6 +109,9 @@ std::vector<Move> MoveGen::GenPseudoLegal(const Board& b, bool whiteToMove){
             else if(piece == W_QUEEN){
                 addQueenMoves(b, sq, true, moves);
             }
+            else if(piece == W_KING){
+                addKingMoves(b, sq, true, moves);
+            }
         }
         else if(!whiteToMove && isBlack(piece)){
             if(piece == B_PAWN){
@@ -124,7 +127,10 @@ std::vector<Move> MoveGen::GenPseudoLegal(const Board& b, bool whiteToMove){
                 addBishopMoves(b, sq, false, moves);
             }
             else if(piece == B_QUEEN){
-                addQueenMoves(b, sq, true, moves);
+                addQueenMoves(b, sq, false, moves);
+            }
+            else if(piece == B_KING){
+                addKingMoves(b, sq, false, moves);
             }
         }
     }
@@ -282,7 +288,7 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     // and king hasnt been checked or is currently in check
     for(int dir : direction){
         int target = square + dir;
-        while(onBoard(target)){
+        if(onBoard(target)){
             if(isWhite(b.squares[target])){
                 continue;
             }
@@ -297,7 +303,7 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     
     // add castling if conditions are met
     if(white){
-        if(b.castlingrights.W_QueenSide == true && b.squares[1] == EMPTY && b.squares[2] == EMPTY
+        if(b.castlingrights.W_QueenSide == true && b.squares[1] == EMPTY && b.squares[2] == EMPTY && b.squares[3]
            && !isSquareAttacked(b, 0, false)
            && !isSquareAttacked(b, 1, false)
            && !isSquareAttacked(b, 2, false)){
@@ -311,7 +317,7 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
         }
     }
     else{
-        if(b.castlingrights.B_KingSide == true && b.squares[57] == EMPTY && b.squares[58] == EMPTY
+        if(b.castlingrights.B_KingSide == true && b.squares[57] == EMPTY && b.squares[58] == EMPTY && b.squares[59]
            && !isSquareAttacked(b, 56, true)
            && !isSquareAttacked(b, 57, true)
            && !isSquareAttacked(b, 58, true)){
