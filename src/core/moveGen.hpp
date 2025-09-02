@@ -7,8 +7,10 @@ class MoveGen {
 public:
     static std::vector<Move> GenPseudoLegal(const Board& b, bool whiteToMove);
 
-    void debugCoordinateSystem();
     static void addPawnMoves(const Board& b, int square, bool white, std::vector<Move>& moves);
     static void addKnightMoves(const Board& b, int square, bool white, std::vector<Move>& moves);
-
+    static void addRookMoves(const Board& b, int square, bool white, std::vector<Move>& moves);
+    static void addBishopMoves(const Board& b, int square, bool white, std::vector<Move>& moves);
+    static void addQueenMoves(const Board& b, int square, bool white, std::vector<Move>& moves);
+    static void addKingMoves(const Board& b, int square, bool white, std::vector<Move>& moves);
 };
