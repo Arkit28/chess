@@ -304,29 +304,29 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     // add castling if conditions are met
     if(white){
         if(b.castlingrights.W_QueenSide == true && b.squares[1] == EMPTY && b.squares[2] == EMPTY && b.squares[3]
-           && !isSquareAttacked(b, 0, false)
-           && !isSquareAttacked(b, 1, false)
+           && !isSquareAttacked(b, 4, false)
+           && !isSquareAttacked(b, 3, false)
            && !isSquareAttacked(b, 2, false)){
             moves.push_back({square, 2, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
         if(b.castlingrights.W_KingSide == true && b.squares[5] == EMPTY && b.squares[6] == EMPTY
+           && !isSquareAttacked(b, 4, false)
            && !isSquareAttacked(b, 5, false)
-           && !isSquareAttacked(b, 6, false)
-           && !isSquareAttacked(b, 7, false)){
+           && !isSquareAttacked(b, 6, false)){
             moves.push_back({square, 6, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
     }
     else{
-        if(b.castlingrights.B_KingSide == true && b.squares[57] == EMPTY && b.squares[58] == EMPTY && b.squares[59]
-           && !isSquareAttacked(b, 56, true)
-           && !isSquareAttacked(b, 57, true)
+        if(b.castlingrights.B_QueenSide == true && b.squares[57] == EMPTY && b.squares[58] == EMPTY && b.squares[59] == EMPTY
+           && !isSquareAttacked(b, 60, true)
+           && !isSquareAttacked(b, 59, true)
            && !isSquareAttacked(b, 58, true)){
             moves.push_back({square, 57, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
         if(b.castlingrights.B_KingSide == true && b.squares[61] == EMPTY && b.squares[62] == EMPTY
+           && !isSquareAttacked(b, 60, true)
            && !isSquareAttacked(b, 61, true)
-           && !isSquareAttacked(b, 52, true)
-           && !isSquareAttacked(b, 63, true)){
+           && !isSquareAttacked(b, 62, true)){
             moves.push_back({square, 62, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
     }
