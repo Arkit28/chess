@@ -139,6 +139,12 @@ std::vector<Move> MoveGen::GenPseudoLegal(const Board& b, bool whiteToMove){
 
 
 void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<Move>& moves){
+
+    //en passant conditons: 
+    // white - rank=5 and black pawn's last move must have been double_pawn_push
+    // black - rank=4 and white pawn's last move must have been double_pawn_push
+    // the opposing pawn must land directly adjacent to the current side's pawn
+    // the pawn must be taken on that move otherwise it is gone 
       
     if(white){
         int forward = square + 8;
