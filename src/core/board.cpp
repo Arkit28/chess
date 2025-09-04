@@ -143,7 +143,6 @@ std::vector<Move> Board::generateLegalMoves(){
     std::vector<Move> pseudoLegalMoves = MoveGen::GenPseudoLegal(*this, whiteToMove);
     std::vector<Move> legalMoves;
 
-    std::cout << "Generated " << pseudoLegalMoves.size() << " pseudo-legal moves\n";
     for(auto& move : pseudoLegalMoves){
         Board testBoard = *this;
         testBoard.makeMove(move);
@@ -152,8 +151,6 @@ std::vector<Move> Board::generateLegalMoves(){
             legalMoves.push_back(move);
         }
     }
-        std::cout << "Generated " << legalMoves.size() << " legal moves\n";
-
     return legalMoves;
 
 }
@@ -350,7 +347,7 @@ bool Board::IsMoveLegal(const Move& move, const std::vector<Move>& legalMoves){
     return false;
 }
 
-
+/*
 bool Board::isSquareAttacked(int square, bool byWhite) const{
     if(byWhite){
         if(onBoard(square + 7) && squares[square + 7] == W_PAWN) return true;
@@ -365,6 +362,10 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
     for(int offset : knightOffset){
         int target = square + offset;
         if(onBoard(target)){
+            int fileDiff = std::abs(file(target) - file(square));
+            int rankDiff = std::abs(rank(target) - rank(square));
+            if(!((fileDiff == 2 && rankDiff == 1) || (fileDiff == 1 && rankDiff == 2))) continue;
+            
             if(squares[target] == W_KNIGHT && byWhite) return true;
             if(squares[target] == B_KNIGHT && !byWhite) return true;
         }
@@ -423,5 +424,113 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
 
     return false;
 
+}
+*/
+// helper predicates you likely already have:
+inline int fileOf(int sq) { return sq % 8; }
+inline int rankOf(int sq) { return sq / 8; }
+inline bool isWhitePiece(int p) { return p >= W_PAWN && p <= W_KING; }
+inline bool isBlackPiece(int p) { return p >= B_PAWN && p <= B_KING; }
+
+bool Board::isSquareAttacked(int square, bool byWhite) const{
+    // 1) pawn attacks
+    if(byWhite){
+        int from = square - 7;
+        if(onBoard(from) && fileOf(from) == fileOf(square) - 1 && squares[from] == W_PAWN) return true;
+        from = square - 9;
+        if(onBoard(from) && fileOf(from) == fileOf(square) + 1 && squares[from] == W_PAWN) return true;
+    } 
+    else{
+        int from = square + 7;
+        if(onBoard(from) && fileOf(from) == fileOf(square) + 1 && squares[from] == B_PAWN) return true;
+        from = square + 9;
+        if(onBoard(from) && fileOf(from) == fileOf(square) - 1 && squares[from] == B_PAWN) return true;
+    }
+
+    // 2) knights
+    const int knightOffsets[8] = {6, -6, 10, -10, 15, -15, 17, -17};
+    for(int d : knightOffsets){
+        int t = square + d;
+        if(!onBoard(t)) continue;
+        int fd = std::abs(fileOf(t) - fileOf(square));
+        int rd = std::abs(rankOf(t) - rankOf(square));
+        if(!((fd == 1 && rd == 2) || (fd == 2 && rd == 1))) continue;
+        if(byWhite & squares[t] == W_KNIGHT & squares[t] == B_KNIGHT) return true;
+    }
+
+    // helper to check attacker color
+    auto isAttackerPiece = [&](int p){
+        return byWhite ? isWhitePiece(p) : isBlackPiece(p);
+    };
+
+    // 3) straight rays (rook/queen)
+    const int rookDirs[4] = {1, -1, 8, -8};
+    for(int dir : rookDirs){
+        int prev = square;
+        int t = square + dir;
+        while(onBoard(t)){
+            // prevent horizontal wrap
+            if((dir == 1 || dir == -1) && rankOf(t) != rankOf(prev)) break;
+
+            int p = squares[t];
+            if(p == EMPTY){
+                prev = t;
+                t += dir;
+                continue;
+            }
+            // if piece belongs to attacker
+            if(isAttackerPiece(p)){
+                if ((byWhite && (p == W_ROOK || p == W_QUEEN)) ||
+                    (!byWhite && (p == B_ROOK || p == B_QUEEN)) ){
+                    return true;
+                }
+                break; // attacker piece but not rook/queen -> blocked
+            } 
+            else{
+                break; // blocked by defender piece
+            }
+        }
+    }
+
+    // 4) diagonals (bishop/queen)
+    const int diagDirs[4] = {9, -9, 7, -7};
+    for(int dir : diagDirs){
+        int prev = square;
+        int t = square + dir;
+        while(onBoard(t)){
+            // ensure step is diagonal (file & rank step of 1)
+            if(std::abs(fileOf(t) - fileOf(prev)) != 1 || std::abs(rankOf(t) - rankOf(prev)) != 1) break;
+
+            int p = squares[t];
+            if(p == EMPTY){
+                prev = t;
+                t += dir;
+                continue;
+            }
+            if(isAttackerPiece(p)){
+                if ((byWhite && (p == W_BISHOP || p == W_QUEEN)) ||
+                    (!byWhite && (p == B_BISHOP || p == B_QUEEN))){
+                    return true;
+                }
+                break;
+            } 
+            else{
+                break;
+            }
+        }
+    }
+
+    // 5) adjacent king (must check adjacency safely — avoid wrap)
+    for(int dir : {1, -1, 8, -8, 7, -7, 9, -9}){
+        int t = square + dir;
+        if(!onBoard(t)) continue;
+        int fd = std::abs(fileOf(t) - fileOf(square));
+        int rd = std::abs(rankOf(t) - rankOf(square));
+        if(fd <= 1 && rd <= 1){
+            if (byWhite & squares[t] == W_KING & squares[t] == B_KING) return true;
+        }
+    }
+
+    return false;
 }
 
