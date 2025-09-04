@@ -143,6 +143,7 @@ std::vector<Move> Board::generateLegalMoves(){
     std::vector<Move> pseudoLegalMoves = MoveGen::GenPseudoLegal(*this, whiteToMove);
     std::vector<Move> legalMoves;
 
+    std::cout << "Generated " << pseudoLegalMoves.size() << " pseudo-legal moves\n";
     for(auto& move : pseudoLegalMoves){
         Board testBoard = *this;
         testBoard.makeMove(move);
@@ -151,19 +152,20 @@ std::vector<Move> Board::generateLegalMoves(){
             legalMoves.push_back(move);
         }
     }
+        std::cout << "Generated " << legalMoves.size() << " legal moves\n";
 
     return legalMoves;
 
 }
 
 bool Board::isCheckmate(){
-    if(!isCheck(whiteToMove) && fullMoveNumber == 0) return false;
+    if(!isCheck(whiteToMove)) return false;
     return generateLegalMoves().empty();
 }
    
 
 bool Board::isStalemate(){
-    if(isCheck(whiteToMove) && fullMoveNumber == 0) return false;
+    if(isCheck(whiteToMove)) return false;
     return generateLegalMoves().empty();
 }
 
@@ -239,11 +241,11 @@ void Board::makeMove(Move& m){
         squares[m.to] = squares[m.from];
         squares[m.from] = EMPTY;
     }
-    if(m.flags == CAPTURE){
+    else if(m.flags == CAPTURE){
         squares[m.to] = squares[m.from];
         squares[m.from] = EMPTY;
     }
-    if(m.flags == PROMOTION){
+    else if(m.flags == PROMOTION){
         if(squares[m.from] == W_PAWN){
             squares[m.to] = W_QUEEN;          //to be changed
             squares[m.from] = EMPTY;
@@ -254,14 +256,14 @@ void Board::makeMove(Move& m){
         squares[m.from] = EMPTY;
     }
     if(m.flags == CASTLING){
-        if(squares[m.to] == 2){
+        if(m.to == 2){
             squares[m.to] = W_KING;
             squares[3] = W_ROOK;
             squares[m.from] = EMPTY;
             squares[0] = EMPTY;
             castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
         }
-        else if(squares[m.to] == 6){
+        else if(m.to == 6){
             squares[m.to] = W_KING;
             squares[5] = W_ROOK;
             squares[m.from] = EMPTY;
@@ -269,14 +271,14 @@ void Board::makeMove(Move& m){
             castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
 
         }
-        else if(squares[m.to] == 58){
+        else if(m.to == 58){
             squares[m.to] = W_KING;
             squares[59] = W_ROOK;
             squares[m.from] = EMPTY;
             squares[56] = EMPTY;
             castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
         }
-        else if(squares[m.to] == 62){
+        else if(m.to == 62){
             squares[m.to] = W_KING;
             squares[61] = W_ROOK;
             squares[m.from] = EMPTY;
@@ -351,12 +353,12 @@ bool Board::IsMoveLegal(const Move& move, const std::vector<Move>& legalMoves){
 
 bool Board::isSquareAttacked(int square, bool byWhite) const{
     if(byWhite){
-        if(onBoard(square - 7) && squares[square-7] == W_PAWN) return true;
-        if(onBoard(square - 9) && squares[square-9] == W_PAWN) return true;
+        if(onBoard(square + 7) && squares[square + 7] == W_PAWN) return true;
+        if(onBoard(square + 9) && squares[square + 9] == W_PAWN) return true;
     }
     else{
-        if(onBoard(square + 7) && squares[square+7] == B_PAWN) return true;
-        if(onBoard(square + 9) && squares[square+9] == B_PAWN) return true;
+        if(onBoard(square - 7) && squares[square - 7] == B_PAWN) return true;
+        if(onBoard(square - 9) && squares[square - 9] == B_PAWN) return true;
     }
 
     int knightOffset[8] = {6, -6, 10, -10, 15, -15, 17, -17};

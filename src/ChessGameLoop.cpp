@@ -98,7 +98,7 @@ private:
     void showLegalMoves(){
         std::vector<Move> legalMoves = board.generateLegalMoves();
         std::cout << "Legal moves (" << legalMoves.size() << "): ";
-        for(size_t i = 0; 0 < legalMoves.size(); i++){
+        for(size_t i = 0; i < legalMoves.size(); i++){
             std::cout << legalMoves[i].toString();
             if(i < legalMoves.size()-1){
                 std::cout << ", ";

@@ -13,12 +13,12 @@ bool isBlack(const int piece){
 
 bool isSquareAttacked(const Board& b, int square, bool byWhite){
     if(byWhite){
-        if(onBoard(square - 7) && b.squares[square-7] == W_PAWN) return true;
-        if(onBoard(square - 9) && b.squares[square-9] == W_PAWN) return true;
+        if(onBoard(square + 7) && b.squares[square + 7] == W_PAWN) return true;
+        if(onBoard(square + 9) && b.squares[square + 9] == W_PAWN) return true;
     }
     else{
-        if(onBoard(square + 7) && b.squares[square+7] == B_PAWN) return true;
-        if(onBoard(square + 9) && b.squares[square+9] == B_PAWN) return true;
+        if(onBoard(square - 7) && b.squares[square - 7] == B_PAWN) return true;
+        if(onBoard(square - 9) && b.squares[square - 9] == B_PAWN) return true;
     }
 
     int knightOffset[8] = {6, -6, 10, -10, 15, -15, 17, -17};
@@ -195,40 +195,49 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
 
 void MoveGen::addKnightMoves(const Board& b, int square, bool white, std::vector<Move>& moves) {
     //moves in L shapes from current position
-    //in theory need to workout four movements, then invert them
     // also need to check whether moves are captures or quiet
 
     //Use knight move offsets
     const int knightOffsets[8] = {17, 15, 10, 6, -17, -15, -10, -6};
-    if(white){
-        for(int i = 0; i < 8; i++){         // for each possible move of the knight
-            int target = square + knightOffsets[i];
-            if(onBoard(target) && !isWhite(b.squares[target])){
+    for(int i = 0; i < 8; i++){         // for each possible move of the knight
+        int target = square + knightOffsets[i];
+
+        if(onBoard(target)) continue; 
+
+        int fromFile = file(square);
+        int toFile = file(target);
+        int fromRank = rank(square);
+        int toRank = rank(target);
+
+        int fileDiff = std::abs(toFile - fromFile);
+        int rankDiff = std::abs(toRank - fromRank);
+
+        if(!(fileDiff == 2 && rankDiff == 1) || (fileDiff == 1 && rankDiff == 2)) continue;
+        
+        if(white){
+            if(!isWhite(b.squares[target])){
                 if(isBlack(b.squares[target])){
                     moves.push_back({square, target, b.squares[target], EMPTY, MoveFlags::CAPTURE});
                 }
                 else{
-                    moves.push_back({square, target, EMPTY, EMPTY, MoveFlags::QUIET});
+                    moves.push_back({square, target, b.squares[target], EMPTY, MoveFlags::QUIET});
                 }
             }
         }
-    }
-    else{
-        for(int i = 0; i < 8; i++){         // for each possible move of the knight
-            int target = square + knightOffsets[i];
-            if(onBoard(target) && !isBlack(b.squares[target])){
+        else{
+            if(!isBlack(b.squares[target])){
                 if(isWhite(b.squares[target])){
                     moves.push_back({square, target, b.squares[target], EMPTY, MoveFlags::CAPTURE});
                 }
                 else{
-                    moves.push_back({square, target, EMPTY, EMPTY, MoveFlags::QUIET});
+                    moves.push_back({square, target, b.squares[target], EMPTY, MoveFlags::QUIET});
                 }
             }
-        }
-
-    }
+        }   
+    }       
 
 }
+
 
 void MoveGen::addRookMoves(const Board& b, int square, bool white, std::vector<Move>& moves){
     int direction[4] = {1, -1, 8, -8};
@@ -292,10 +301,21 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     // castling
     // conditions: king and rook havent moved since the start of the game 
     // and king hasnt been checked or is currently in check
+    auto isFriendly = white ? isWhite : isBlack;
     for(int dir : direction){
         int target = square + dir;
         if(onBoard(target)){
-            if(isWhite(b.squares[target])){
+
+            if((dir == 7 || dir == -7 || dir == 9 || dir == -9)){
+                int fileDiff = abs(file(target) - file(square));
+                if(fileDiff != 1){
+                    continue; 
+                }
+            }
+            if((dir == 1 || dir == -1) && rank(target) != rank(square)) {
+                continue;
+            }
+            if(isFriendly(b.squares[target])){
                 continue;
             }
             else if(b.squares[target] == EMPTY){
