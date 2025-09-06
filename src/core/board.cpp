@@ -108,7 +108,7 @@ void Board::updateGameState(const Move& move){
         }
     }
 
-    if(move.flags && CAPTURE || move.flags == EN_PASSANT || squares[move.to] == W_PAWN || squares[move.to] == B_PAWN){
+    if(move.flags & CAPTURE || move.flags == EN_PASSANT || squares[move.to] == W_PAWN || squares[move.to] == B_PAWN){
         halfmoveClock = 0;
     }
     else{
@@ -249,7 +249,7 @@ void Board::makeMove(Move& m){
             squares[m.to - 8] = EMPTY;
         }
         else{
-            squares[m.to - 8] = EMPTY;
+            squares[m.to + 8] = EMPTY;
         }
     }
     else if(m.flags == PROMOTION){
@@ -279,15 +279,15 @@ void Board::makeMove(Move& m){
 
         }
         else if(m.to == 58){
-            squares[m.to] = W_KING;
-            squares[59] = W_ROOK;
+            squares[m.to] = B_KING;
+            squares[59] = B_ROOK;
             squares[m.from] = EMPTY;
             squares[56] = EMPTY;
             castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
         }
         else if(m.to == 62){
-            squares[m.to] = W_KING;
-            squares[61] = W_ROOK;
+            squares[m.to] = B_KING;
+            squares[61] = B_ROOK;
             squares[m.from] = EMPTY;
             squares[63] = EMPTY;
             castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
@@ -448,7 +448,7 @@ bool IsBlack(const int piece){
 
 
 bool Board::isSquareAttacked(int square, bool byWhite) const{
-    // 1) pawn attacks
+    // pawn attacks
     if(byWhite){
         int from = square - 7;
         if(onBoard(from) && file(from) == file(square) - 1 && squares[from] == W_PAWN) return true;
@@ -462,7 +462,7 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         if(onBoard(from) && file(from) == file(square) - 1 && squares[from] == B_PAWN) return true;
     }
 
-    // 2) knights
+    // knight
     const int knightOffsets[8] = {6, -6, 10, -10, 15, -15, 17, -17};
     for(int d : knightOffsets){
         int t = square + d;
@@ -470,15 +470,15 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         int fd = std::abs(file(t) - file(square));
         int rd = std::abs(rank(t) - rank(square));
         if(!((fd == 1 && rd == 2) || (fd == 2 && rd == 1))) continue;
-        if(byWhite & squares[t] == W_KNIGHT & squares[t] == B_KNIGHT) return true;
+        if(byWhite && squares[t] == W_KNIGHT && squares[t] == B_KNIGHT) return true;
     }
 
-    // helper to check attacker color
+    
     auto isAttackerPiece = [&](int p){
         return byWhite ? IsWhite(p) : IsBlack(p);
     };
 
-    // 3) straight rays (rook/queen)
+    // rook/queen
     const int rookDirs[4] = {1, -1, 8, -8};
     for(int dir : rookDirs){
         int prev = square;
@@ -499,15 +499,15 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
                     (!byWhite && (p == B_ROOK || p == B_QUEEN)) ){
                     return true;
                 }
-                break; // attacker piece but not rook/queen -> blocked
+                break; //blocked by own side
             } 
             else{
-                break; // blocked by defender piece
+                break; 
             }
         }
     }
 
-    // 4) diagonals (bishop/queen)
+    // bishop/queen
     const int diagDirs[4] = {9, -9, 7, -7};
     for(int dir : diagDirs){
         int prev = square;
@@ -535,14 +535,14 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         }
     }
 
-    // 5) adjacent king (must check adjacency safely — avoid wrap)
+    // kings being close 
     for(int dir : {1, -1, 8, -8, 7, -7, 9, -9}){
         int t = square + dir;
         if(!onBoard(t)) continue;
         int fd = std::abs(file(t) - file(square));
         int rd = std::abs(rank(t) - rank(square));
         if(fd <= 1 && rd <= 1){
-            if (byWhite & squares[t] == W_KING & squares[t] == B_KING) return true;
+            if (byWhite && squares[t] == W_KING && squares[t] == B_KING) return true;
         }
     }
 

@@ -201,32 +201,33 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         //White pawn captures
         if(file(square) != 0 && onBoard(capture_left) && isBlack(b.squares[capture_left])){
             if(rank(capture_left) == 7){
-                moves.push_back({square, capture_left, b.squares[capture_left], W_QUEEN, MoveFlags::CAPTURE});
+                moves.push_back({square, capture_left, b.squares[capture_left], W_QUEEN, MoveFlags::CAPTURE | MoveFlags::PROMOTION});
 
             }
             else{
                 moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
             }
-            if(file(square) != 7 && onBoard(capture_right) && isBlack(b.squares[capture_right])){ 
-                if(rank(capture_right) == 7){
-                moves.push_back({square, capture_right, b.squares[capture_right], W_QUEEN, MoveFlags::CAPTURE});
-                }
-                else{
-                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE});
-                }
+        }
+        if(file(square) != 7 && onBoard(capture_right) && isBlack(b.squares[capture_right])){ 
+            if(rank(capture_right) == 7){
+                moves.push_back({square, capture_right, b.squares[capture_right], W_QUEEN, MoveFlags::CAPTURE | MoveFlags::PROMOTION});
             }
-
-            //white en passant - only rank 5
-            if(rank(square) == 4 && b.enPassantSquare != -1){
-                if(file(square) != 0 && capture_left == b.enPassantSquare){
-                    moves.push_back({square, capture_left, B_PAWN, EMPTY, MoveFlags::EN_PASSANT});
-                }
-
-                if(file(square) != 7 && capture_left == b.enPassantSquare){
-                    moves.push_back({square, capture_right, B_PAWN, EMPTY, MoveFlags::EN_PASSANT});
-                }
+            else{
+                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE});
             }
         }
+        
+
+            //white en passant - only rank 5
+        if(rank(square) == 4 && b.enPassantSquare != -1){
+            if(file(square) != 0 && capture_left == b.enPassantSquare){
+                moves.push_back({square, capture_left, B_PAWN, EMPTY, MoveFlags::EN_PASSANT});
+            }
+            if(file(square) != 7 && capture_right == b.enPassantSquare){
+                moves.push_back({square, capture_right, B_PAWN, EMPTY, MoveFlags::EN_PASSANT});
+            }
+        }
+
     }
     else{
         int forward = square - 8;        
@@ -250,7 +251,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         //Black pawn captures
         if(file(square) != 0 && onBoard(capture_left) && isWhite(b.squares[capture_left])){
             if(rank(forward) == 0){
-                moves.push_back({square, capture_left, b.squares[capture_left], B_QUEEN, MoveFlags::PROMOTION});
+                moves.push_back({square, capture_left, b.squares[capture_left], B_QUEEN, MoveFlags::PROMOTION | MoveFlags::CAPTURE});
             }
             else{
                 moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
@@ -258,7 +259,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         }
         if(file(square) != 7 && onBoard(capture_right) && isWhite(b.squares[capture_right])){
             if(rank(capture_left) == 0){
-                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::PROMOTION});
+                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::PROMOTION | MoveFlags::CAPTURE});
             }
             else{
                 moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
@@ -268,7 +269,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         //black en passant
         if(rank(square) == 3 && b.enPassantSquare != -1){
             if(file(square) != 0 && capture_left == b.enPassantSquare){
-                moves.push_back({square, capture_left, W_PAWN, EMPTY, MoveFlags::PROMOTION});
+                moves.push_back({square, capture_left, W_PAWN, EMPTY, MoveFlags::EN_PASSANT});
             }
 
             if(file(square) != 7 && capture_right == b.enPassantSquare){
