@@ -20,3 +20,4 @@ struct Move {
     std::string toString() const;
 
 };
+

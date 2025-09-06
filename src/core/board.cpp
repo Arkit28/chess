@@ -103,12 +103,12 @@ void Board::updateGameState(const Move& move){
         if(squares[move.to] == W_PAWN){
             enPassantSquare = move.to - 8;
         }
-        else{
+        else if(squares[move.to] == B_PAWN){
             enPassantSquare = move.to + 8;
         }
     }
 
-    if(move.flags == CAPTURE || squares[move.to] == W_PAWN || squares[move.to] == B_PAWN){
+    if(move.flags && CAPTURE || move.flags == EN_PASSANT || squares[move.to] == W_PAWN || squares[move.to] == B_PAWN){
         halfmoveClock = 0;
     }
     else{
@@ -242,6 +242,16 @@ void Board::makeMove(Move& m){
         squares[m.to] = squares[m.from];
         squares[m.from] = EMPTY;
     }
+    else if(m.flags == EN_PASSANT){
+        squares[m.to] = squares[m.from];
+        squares[m.from] = EMPTY;
+        if(squares[m.to] == W_PAWN){
+            squares[m.to - 8] = EMPTY;
+        }
+        else{
+            squares[m.to - 8] = EMPTY;
+        }
+    }
     else if(m.flags == PROMOTION){
         if(squares[m.from] == W_PAWN){
             squares[m.to] = W_QUEEN;          //to be changed
@@ -249,8 +259,8 @@ void Board::makeMove(Move& m){
         }
         else{
             squares[m.to] = B_QUEEN;
+            squares[m.from] = EMPTY;
         }
-        squares[m.from] = EMPTY;
     }
     if(m.flags == CASTLING){
         if(m.to == 2){
@@ -426,25 +436,30 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
 
 }
 */
-// helper predicates you likely already have:
-inline int fileOf(int sq) { return sq % 8; }
-inline int rankOf(int sq) { return sq / 8; }
-inline bool isWhitePiece(int p) { return p >= W_PAWN && p <= W_KING; }
-inline bool isBlackPiece(int p) { return p >= B_PAWN && p <= B_KING; }
+
+bool IsWhite(const int piece){
+    return piece == W_BISHOP || piece == W_KING || piece == W_KNIGHT || piece == W_ROOK || piece == W_QUEEN || piece == W_PAWN;
+}
+
+bool IsBlack(const int piece){
+    return piece == B_BISHOP || piece == B_KING || piece == B_KNIGHT || piece == B_ROOK || piece == B_QUEEN || piece == B_PAWN;
+
+}
+
 
 bool Board::isSquareAttacked(int square, bool byWhite) const{
     // 1) pawn attacks
     if(byWhite){
         int from = square - 7;
-        if(onBoard(from) && fileOf(from) == fileOf(square) - 1 && squares[from] == W_PAWN) return true;
+        if(onBoard(from) && file(from) == file(square) - 1 && squares[from] == W_PAWN) return true;
         from = square - 9;
-        if(onBoard(from) && fileOf(from) == fileOf(square) + 1 && squares[from] == W_PAWN) return true;
+        if(onBoard(from) && file(from) == file(square) + 1 && squares[from] == W_PAWN) return true;
     } 
     else{
         int from = square + 7;
-        if(onBoard(from) && fileOf(from) == fileOf(square) + 1 && squares[from] == B_PAWN) return true;
+        if(onBoard(from) && file(from) == file(square) + 1 && squares[from] == B_PAWN) return true;
         from = square + 9;
-        if(onBoard(from) && fileOf(from) == fileOf(square) - 1 && squares[from] == B_PAWN) return true;
+        if(onBoard(from) && file(from) == file(square) - 1 && squares[from] == B_PAWN) return true;
     }
 
     // 2) knights
@@ -452,15 +467,15 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
     for(int d : knightOffsets){
         int t = square + d;
         if(!onBoard(t)) continue;
-        int fd = std::abs(fileOf(t) - fileOf(square));
-        int rd = std::abs(rankOf(t) - rankOf(square));
+        int fd = std::abs(file(t) - file(square));
+        int rd = std::abs(rank(t) - rank(square));
         if(!((fd == 1 && rd == 2) || (fd == 2 && rd == 1))) continue;
         if(byWhite & squares[t] == W_KNIGHT & squares[t] == B_KNIGHT) return true;
     }
 
     // helper to check attacker color
     auto isAttackerPiece = [&](int p){
-        return byWhite ? isWhitePiece(p) : isBlackPiece(p);
+        return byWhite ? IsWhite(p) : IsBlack(p);
     };
 
     // 3) straight rays (rook/queen)
@@ -470,7 +485,7 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         int t = square + dir;
         while(onBoard(t)){
             // prevent horizontal wrap
-            if((dir == 1 || dir == -1) && rankOf(t) != rankOf(prev)) break;
+            if((dir == 1 || dir == -1) && rank(t) != rank(prev)) break;
 
             int p = squares[t];
             if(p == EMPTY){
@@ -499,7 +514,7 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         int t = square + dir;
         while(onBoard(t)){
             // ensure step is diagonal (file & rank step of 1)
-            if(std::abs(fileOf(t) - fileOf(prev)) != 1 || std::abs(rankOf(t) - rankOf(prev)) != 1) break;
+            if(std::abs(file(t) - file(prev)) != 1 || std::abs(rank(t) - rank(prev)) != 1) break;
 
             int p = squares[t];
             if(p == EMPTY){
@@ -524,8 +539,8 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
     for(int dir : {1, -1, 8, -8, 7, -7, 9, -9}){
         int t = square + dir;
         if(!onBoard(t)) continue;
-        int fd = std::abs(fileOf(t) - fileOf(square));
-        int rd = std::abs(rankOf(t) - rankOf(square));
+        int fd = std::abs(file(t) - file(square));
+        int rd = std::abs(rank(t) - rank(square));
         if(fd <= 1 && rd <= 1){
             if (byWhite & squares[t] == W_KING & squares[t] == B_KING) return true;
         }

@@ -12,145 +12,61 @@ bool isBlack(const int piece){
 
 }
 
-/*
-bool isSquareAttacked(const Board& b, int square, bool byWhite){
-    if(byWhite){
-        if(onBoard(square + 7) && b.squares[square + 7] == W_PAWN) return true;
-        if(onBoard(square + 9) && b.squares[square + 9] == W_PAWN) return true;
-    }
-    else{
-        if(onBoard(square - 7) && b.squares[square - 7] == B_PAWN) return true;
-        if(onBoard(square - 9) && b.squares[square - 9] == B_PAWN) return true;
-    }
-
-    int knightOffset[8] = {6, -6, 10, -10, 15, -15, 17, -17};
-    for(int offset : knightOffset){
-        int target = square + offset;
-        if(onBoard(target)){
-            int fileDiff = std::abs(file(target) - file(square));
-            int rankDiff = std::abs(rank(target) - rank(square));
-            if(!((fileDiff == 2 && rankDiff == 1) || (fileDiff == 1 && rankDiff == 2))) continue;
-            
-            if(b.squares[target] == W_KNIGHT && byWhite) return true;
-            if(b.squares[target] == B_KNIGHT && !byWhite) return true;
-        }
-    }
-
-    auto isFriendly = byWhite ? isWhite : isBlack;
-    int direction[4] = {1, -1, 8 , -8};
-    for(const auto& dir : direction){
-        int target = square + dir;
-        while(onBoard(target)){
-            if((dir == -1 || dir == 1) && rank(target) != rank (square)) break;
-
-            if(b.squares[target] == EMPTY){
-                target += dir;
-                continue;
-            }
-            if(isFriendly(b.squares[target])) break;
-            else if(b.squares[target] == W_ROOK || b.squares[target] == W_QUEEN 
-                    || b.squares[target] == B_ROOK || b.squares[target] == B_QUEEN) return true;
-            else break;
-        }
-    }
-
-    int direction1[4] = {9, -9, 7 , -7};
-    for(const auto& dir : direction1){
-        int target = square + dir;
-        while(onBoard(target)){
-            int fileDiff = std::abs(file(target) - file(target-dir));
-            if(fileDiff != 1) break;
-
-            if(b.squares[target] == EMPTY) {
-                target += dir;
-                continue;
-            }
-            if(isFriendly(b.squares[target])){
-                break;
-            }
-            if(byWhite){
-                if(b.squares[target] == W_ROOK || b.squares[target] == W_QUEEN) return true;
-            }
-            else{
-                if(b.squares[target] == B_ROOK || b.squares[target] == B_QUEEN) return true;
-            }
-
-            else break;
-        }
-    }
-
-    int offset[8] = {1, -1, 8, -8, 7, -7, 9, -9};
-    for(const auto& dir : offset){
-        int target = square + dir;
-        if(onBoard(target)){
-            if(byWhite && b.squares[target] == W_KING) return true;
-            if(!byWhite && b.squares[target] == B_KING) return true;
-        }
-    }
-
-    return false;
-
-}
-*/
-// helper predicates you likely already have:
-inline int fileOf(int sq) { return sq % 8; }
-inline int rankOf(int sq) { return sq / 8; }
-inline bool isWhitePiece(int p) { return p >= W_PAWN && p <= W_KING; }
-inline bool isBlackPiece(int p) { return p >= B_PAWN && p <= B_KING; }
-
 bool isSquareAttacked(const Board& b, int square, bool byWhite) {
     // 1) pawn attacks
-    if (byWhite) {
+    if(byWhite){
         int from = square - 7;
-        if (onBoard(from) && fileOf(from) == fileOf(square) - 1 && b.squares[from] == W_PAWN) return true;
+        if(onBoard(from) && file(from) == file(square) - 1 && b.squares[from] == W_PAWN) return true;
         from = square - 9;
-        if (onBoard(from) && fileOf(from) == fileOf(square) + 1 && b.squares[from] == W_PAWN) return true;
-    } else {
+        if(onBoard(from) && file(from) == file(square) + 1 && b.squares[from] == W_PAWN) return true;
+    } 
+    else{
         int from = square + 7;
-        if (onBoard(from) && fileOf(from) == fileOf(square) + 1 && b.squares[from] == B_PAWN) return true;
+        if(onBoard(from) && file(from) == file(square) + 1 && b.squares[from] == B_PAWN) return true;
         from = square + 9;
-        if (onBoard(from) && fileOf(from) == fileOf(square) - 1 && b.squares[from] == B_PAWN) return true;
+        if(onBoard(from) && file(from) == file(square) - 1 && b.squares[from] == B_PAWN) return true;
     }
 
     // 2) knights
     const int knightOffsets[8] = {6, -6, 10, -10, 15, -15, 17, -17};
-    for (int d : knightOffsets) {
+    for(int d : knightOffsets){
         int t = square + d;
-        if (!onBoard(t)) continue;
-        int fd = std::abs(fileOf(t) - fileOf(square));
-        int rd = std::abs(rankOf(t) - rankOf(square));
-        if (!((fd == 1 && rd == 2) || (fd == 2 && rd == 1))) continue;
-        if (byWhite ? b.squares[t] == W_KNIGHT : b.squares[t] == B_KNIGHT) return true;
+        if(!onBoard(t)) continue;
+        int fd = std::abs(file(t) - file(square));
+        int rd = std::abs(rank(t) - rank(square));
+        if(!((fd == 1 && rd == 2) || (fd == 2 && rd == 1))) continue;
+        if(byWhite ? b.squares[t] == W_KNIGHT : b.squares[t] == B_KNIGHT) return true;
     }
 
-    // helper to check attacker color
-    auto isAttackerPiece = [&](int p) {
-        return byWhite ? isWhitePiece(p) : isBlackPiece(p);
+    // check attacker colour
+    auto isAttackerPiece = [&](int p){
+        return byWhite ? isWhite(p) : isBlack(p);
     };
 
     // 3) straight rays (rook/queen)
     const int rookDirs[4] = {1, -1, 8, -8};
-    for (int dir : rookDirs) {
+    for(int dir : rookDirs){
         int prev = square;
         int t = square + dir;
-        while (onBoard(t)) {
+        while(onBoard(t)){
             // prevent horizontal wrap
-            if ((dir == 1 || dir == -1) && rankOf(t) != rankOf(prev)) break;
+            if((dir == 1 || dir == -1) && rank(t) != rank(prev)) break;
 
             int p = b.squares[t];
-            if (p == EMPTY) {
+            if(p == EMPTY) {
                 prev = t;
                 t += dir;
                 continue;
             }
             // if piece belongs to attacker
-            if (isAttackerPiece(p)) {
-                if ( (byWhite && (p == W_ROOK || p == W_QUEEN)) ||
-                     (!byWhite && (p == B_ROOK || p == B_QUEEN)) ) {
+            if(isAttackerPiece(p)){
+                if ((byWhite && (p == W_ROOK || p == W_QUEEN)) ||
+                    (!byWhite && (p == B_ROOK || p == B_QUEEN)) ) {
                     return true;
                 }
                 break; // attacker piece but not rook/queen -> blocked
-            } else {
+            } 
+            else{
                 break; // blocked by defender piece
             }
         }
@@ -158,39 +74,40 @@ bool isSquareAttacked(const Board& b, int square, bool byWhite) {
 
     // 4) diagonals (bishop/queen)
     const int diagDirs[4] = {9, -9, 7, -7};
-    for (int dir : diagDirs) {
+    for(int dir : diagDirs){
         int prev = square;
         int t = square + dir;
-        while (onBoard(t)) {
+        while(onBoard(t)) {
             // ensure step is diagonal (file & rank step of 1)
-            if (std::abs(fileOf(t) - fileOf(prev)) != 1 || std::abs(rankOf(t) - rankOf(prev)) != 1) break;
+            if (std::abs(file(t) - file(prev)) != 1 || std::abs(rank(t) - rank(prev)) != 1) break;
 
             int p = b.squares[t];
-            if (p == EMPTY) {
+            if(p == EMPTY){
                 prev = t;
                 t += dir;
                 continue;
             }
-            if (isAttackerPiece(p)) {
-                if ((byWhite && (p == W_BISHOP || p == W_QUEEN)) ||
+            if(isAttackerPiece(p)) {
+                if((byWhite && (p == W_BISHOP || p == W_QUEEN)) ||
                     (!byWhite && (p == B_BISHOP || p == B_QUEEN))) {
                     return true;
                 }
                 break;
-            } else {
+            } 
+            else{
                 break;
             }
         }
     }
 
     // 5) adjacent king (must check adjacency safely — avoid wrap)
-    for (int dir : {1, -1, 8, -8, 7, -7, 9, -9}) {
+    for(int dir : {1, -1, 8, -8, 7, -7, 9, -9}){
         int t = square + dir;
-        if (!onBoard(t)) continue;
-        int fd = std::abs(fileOf(t) - fileOf(square));
-        int rd = std::abs(rankOf(t) - rankOf(square));
-        if (fd <= 1 && rd <= 1) {
-            if (byWhite ? b.squares[t] == W_KING : b.squares[t] == B_KING) return true;
+        if(!onBoard(t)) continue;
+        int fd = std::abs(file(t) - file(square));
+        int rd = std::abs(rank(t) - rank(square));
+        if(fd <= 1 && rd <= 1){
+            if(byWhite ? b.squares[t] == W_KING : b.squares[t] == B_KING) return true;
         }
     }
 
@@ -268,7 +185,14 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
 
         //White pawn forward moves
         if(onBoard(forward) && b.squares[forward] == EMPTY){
-            moves.push_back({square, forward, EMPTY, EMPTY, MoveFlags::QUIET});
+
+            if(rank(forward) == 7){
+                moves.push_back({square, forward, b.squares[forward], W_QUEEN, MoveFlags::PROMOTION});  // EXPAND TO OTHER PIECES
+            }
+            else{
+                moves.push_back({square, forward, EMPTY, EMPTY, MoveFlags::QUIET});
+            }
+
             if(onBoard(forward2) && b.squares[forward2] == EMPTY && rank(square) == 1){
                 moves.push_back({square, forward2, EMPTY, EMPTY, MoveFlags::DOUBLE_PAWN_PUSH});
             }
@@ -276,10 +200,32 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         
         //White pawn captures
         if(file(square) != 0 && onBoard(capture_left) && isBlack(b.squares[capture_left])){
+            if(rank(capture_left) == 7){
+                moves.push_back({square, capture_left, b.squares[capture_left], W_QUEEN, MoveFlags::CAPTURE});
+
+            }
+            else{
                 moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
-        }
-        if(file(square) != 7 && onBoard(capture_right) && isBlack(b.squares[capture_right])){ 
-               moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE});
+            }
+            if(file(square) != 7 && onBoard(capture_right) && isBlack(b.squares[capture_right])){ 
+                if(rank(capture_right) == 7){
+                moves.push_back({square, capture_right, b.squares[capture_right], W_QUEEN, MoveFlags::CAPTURE});
+                }
+                else{
+                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE});
+                }
+            }
+
+            //white en passant - only rank 5
+            if(rank(square) == 4 && b.enPassantSquare != -1){
+                if(file(square) != 0 && capture_left == b.enPassantSquare){
+                    moves.push_back({square, capture_left, B_PAWN, EMPTY, MoveFlags::EN_PASSANT});
+                }
+
+                if(file(square) != 7 && capture_left == b.enPassantSquare){
+                    moves.push_back({square, capture_right, B_PAWN, EMPTY, MoveFlags::EN_PASSANT});
+                }
+            }
         }
     }
     else{
@@ -290,7 +236,12 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
 
         //Black pawn forward moves
         if(onBoard(forward) && b.squares[forward] == EMPTY){
-            moves.push_back({square, forward, EMPTY, EMPTY, MoveFlags::QUIET});
+            if(rank(forward) == 0){
+                moves.push_back({square, forward, EMPTY, B_QUEEN, MoveFlags::PROMOTION});
+            }
+            else{
+                moves.push_back({square, forward, EMPTY, EMPTY, MoveFlags::QUIET});
+            }
             if(onBoard(forward2) && b.squares[forward2] == EMPTY && rank(square) == 6){
                 moves.push_back({square, forward2, EMPTY, EMPTY, MoveFlags::DOUBLE_PAWN_PUSH});
             }
@@ -298,14 +249,34 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         
         //Black pawn captures
         if(file(square) != 0 && onBoard(capture_left) && isWhite(b.squares[capture_left])){
-            moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
+            if(rank(forward) == 0){
+                moves.push_back({square, capture_left, b.squares[capture_left], B_QUEEN, MoveFlags::PROMOTION});
+            }
+            else{
+                moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
+            }
         }
         if(file(square) != 7 && onBoard(capture_right) && isWhite(b.squares[capture_right])){
-            moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE});
+            if(rank(capture_left) == 0){
+                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::PROMOTION});
+            }
+            else{
+                moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
+            }
+        }
+        
+        //black en passant
+        if(rank(square) == 3 && b.enPassantSquare != -1){
+            if(file(square) != 0 && capture_left == b.enPassantSquare){
+                moves.push_back({square, capture_left, W_PAWN, EMPTY, MoveFlags::PROMOTION});
+            }
+
+            if(file(square) != 7 && capture_right == b.enPassantSquare){
+                moves.push_back({square, capture_right, W_PAWN, EMPTY, MoveFlags::EN_PASSANT});
+            }
         }
     }
 }
-
 
 void MoveGen::addKnightMoves(const Board& b, int square, bool white, std::vector<Move>& moves) {
     //moves in L shapes from current position
@@ -351,7 +322,6 @@ void MoveGen::addKnightMoves(const Board& b, int square, bool white, std::vector
     }       
 
 }
-
 
 void MoveGen::addRookMoves(const Board& b, int square, bool white, std::vector<Move>& moves){
     int direction[4] = {1, -1, 8, -8};
@@ -400,7 +370,6 @@ void MoveGen::addBishopMoves(const Board& b, int square, bool white, std::vector
         }
     }
 }
-
 
 void MoveGen::addQueenMoves(const Board& b, int square, bool white, std::vector<Move>& moves){
     addBishopMoves(b,square, white, moves);
