@@ -25,7 +25,7 @@ struct TTEntry {
 
 class ChessEngine {
 public: 
-    ChessEngine(EngineLevel level = EngineLevel::EASY);    // default engine level is EASY
+    ChessEngine(EngineLevel level = EngineLevel::EASY);    // default engine level = EASY
 
     //Main interface
     Move getBestMove(const Board& board, int timelimit=5000);
