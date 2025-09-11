@@ -218,7 +218,7 @@ std::vector<Move> ChessEngine::orderMoves(const Board& board, const std::vector<
     }
 
     //sort by highest score
-    std::sort(scoredMoves.begin(), scoredMoves.end(),[](const auto&a, const auto& b) {return a.second > b.second});
+    std::sort(scoredMoves.begin(), scoredMoves.end(),[](const auto&a, const auto& b) {return a.second > b.second; });
 
     std::vector<Move> orderedMoves;
     for(const auto& pair : scoredMoves){

@@ -1,9 +1,22 @@
-cmake_minimum_required(VERSION 3.15)
-project(ChessGame CXX)
+cmake_minimum_required(VERSION 3.16)
+project(chess CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-set(SMAKE_CXX_STANDARD_REQUIRED ON)
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Add executable with all source files
 add_executable(chess
-    src/main.cpp
+    src/ChessGameLoop.cpp
+    src/core/board.cpp
+    src/core/move.cpp
+    src/core/moveGen.cpp
+    src/engine/engine.cpp
+)
+
+# Include directories for headers
+target_include_directories(chess PRIVATE
+    src/
+    src/core/
+    src/engine/
 )

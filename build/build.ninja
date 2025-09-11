@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: ChessGame
+# Project: chess
 # Configurations: Debug
 # =============================================================================
 
@@ -49,12 +49,45 @@ cmake_ninja_workdir = C$:/projects/chess/build/
 
 build cmake_object_order_depends_target_chess: phony || .
 
-build CMakeFiles/chess.dir/src/main.cpp.obj: CXX_COMPILER__chess_unscanned_Debug C$:/projects/chess/src/main.cpp || cmake_object_order_depends_target_chess
+build CMakeFiles/chess.dir/src/ChessGameLoop.cpp.obj: CXX_COMPILER__chess_unscanned_Debug C$:/projects/chess/src/ChessGameLoop.cpp || cmake_object_order_depends_target_chess
   CONFIG = Debug
-  DEP_FILE = CMakeFiles\chess.dir\src\main.cpp.obj.d
-  FLAGS = -g -std=gnu++20
+  DEP_FILE = CMakeFiles\chess.dir\src\ChessGameLoop.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine
   OBJECT_DIR = CMakeFiles\chess.dir
   OBJECT_FILE_DIR = CMakeFiles\chess.dir\src
+
+build CMakeFiles/chess.dir/src/core/board.cpp.obj: CXX_COMPILER__chess_unscanned_Debug C$:/projects/chess/src/core/board.cpp || cmake_object_order_depends_target_chess
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\chess.dir\src\core\board.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine
+  OBJECT_DIR = CMakeFiles\chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\chess.dir\src\core
+
+build CMakeFiles/chess.dir/src/core/move.cpp.obj: CXX_COMPILER__chess_unscanned_Debug C$:/projects/chess/src/core/move.cpp || cmake_object_order_depends_target_chess
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\chess.dir\src\core\move.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine
+  OBJECT_DIR = CMakeFiles\chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\chess.dir\src\core
+
+build CMakeFiles/chess.dir/src/core/moveGen.cpp.obj: CXX_COMPILER__chess_unscanned_Debug C$:/projects/chess/src/core/moveGen.cpp || cmake_object_order_depends_target_chess
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\chess.dir\src\core\moveGen.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine
+  OBJECT_DIR = CMakeFiles\chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\chess.dir\src\core
+
+build CMakeFiles/chess.dir/src/engine/engine.cpp.obj: CXX_COMPILER__chess_unscanned_Debug C$:/projects/chess/src/engine/engine.cpp || cmake_object_order_depends_target_chess
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\chess.dir\src\engine\engine.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine
+  OBJECT_DIR = CMakeFiles\chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\chess.dir\src\engine
 
 
 # =============================================================================
@@ -64,7 +97,7 @@ build CMakeFiles/chess.dir/src/main.cpp.obj: CXX_COMPILER__chess_unscanned_Debug
 #############################################
 # Link the executable chess.exe
 
-build chess.exe: CXX_EXECUTABLE_LINKER__chess_Debug CMakeFiles/chess.dir/src/main.cpp.obj
+build chess.exe: CXX_EXECUTABLE_LINKER__chess_Debug CMakeFiles/chess.dir/src/ChessGameLoop.cpp.obj CMakeFiles/chess.dir/src/core/board.cpp.obj CMakeFiles/chess.dir/src/core/move.cpp.obj CMakeFiles/chess.dir/src/core/moveGen.cpp.obj CMakeFiles/chess.dir/src/engine/engine.cpp.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

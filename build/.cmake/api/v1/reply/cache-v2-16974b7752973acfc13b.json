@@ -142,8 +142,8 @@
 					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "UNINITIALIZED",
-			"value" : "g++"
+			"type" : "FILEPATH",
+			"value" : "C:/prog/ucrt64/bin/g++.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_AR",
@@ -783,7 +783,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "ChessGame"
+			"value" : "chess"
 		},
 		{
 			"name" : "CMAKE_PROJECT_VERSION",
@@ -1263,6 +1263,42 @@
 		},
 		{
 			"name" : "ChessGame_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "C:/projects/chess"
+		},
+		{
+			"name" : "chess_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "C:/projects/chess/build"
+		},
+		{
+			"name" : "chess_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "chess_SOURCE_DIR",
 			"properties" : 
 			[
 				{
