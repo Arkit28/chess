@@ -36,6 +36,27 @@ ChessEngine::ChessEngine(EngineLevel level) : level_(level), maxDepth_(3), timeL
     }
 }
 
+void ChessEngine::setLevel(EngineLevel level) {
+    level_ = level;
+    switch(level_) {
+        case EngineLevel::RANDOM:     maxDepth_ = 0; break;
+        case EngineLevel::BEGINNER:   maxDepth_ = 2; break;
+        case EngineLevel::EASY:       maxDepth_ = 3; break;
+        case EngineLevel::MEDIUM:     maxDepth_ = 4; break;
+        case EngineLevel::HARD:       maxDepth_ = 5; break;
+        case EngineLevel::EXPERT:     maxDepth_ = 6; break;
+    }
+}
+
+const int ChessEngine::PAWN_TABLE[64] = {0};
+const int ChessEngine::KNIGHT_TABLE[64] = {0};
+const int ChessEngine::BISHOP_TABLE[64] = {0};  
+const int ChessEngine::ROOK_TABLE[64] = {0};
+const int ChessEngine::QUEEN_TABLE[64] = {0};
+const int ChessEngine::KING_MG_TABLE[64] = {0};
+const int ChessEngine::KING_EG_TABLE[64] = {0};
+
+
 Move ChessEngine::getBestMove(const Board& board, int timelimit){
     return getBestMove(board, maxDepth_, timeLimit_);
 }
@@ -256,4 +277,29 @@ float ChessEngine::evaluateKingSafety(const Board& board){
 float ChessEngine::evaluatePawnStructure(const Board& board){
     //To Do
     return 0.0f;
+}
+
+float ChessEngine::minimax(Board& board, int depth, bool maximizingPlayer) {
+    // TODO: Implement minimax (can use alphaBeta for now)
+    return alphaBeta(board, depth, -std::numeric_limits<float>::infinity(), 
+                     std::numeric_limits<float>::infinity(), maximizingPlayer);
+}
+
+float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool maximizingPlayer) {
+    // TODO: Implement quiescence search
+    return evaluatePosition(board);
+}
+
+uint64_t ChessEngine::hashPosition(const Board& board) {
+    // TODO: Implement position hashing
+    return 0;
+}
+
+void ChessEngine::storeTTEntry(uint64_t key, float score, int depth, int flag, const Move& bestMove) {
+    // TODO: Implement transposition table storage
+}
+
+bool ChessEngine::probeTTEntry(uint64_t key, int depth, float alpha, float beta, float& score, Move& bestMove) {
+    // TODO: Implement transposition table lookup
+    return false;
 }
