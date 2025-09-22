@@ -1,6 +1,7 @@
 #include "engine.hpp"
 #include "../core/moveGen.hpp"
 #include "../core/utils.hpp"
+#include "../engine/piece_tables.hpp"
 #include <algorithm>
 #include <random>
 #include <limits>
@@ -134,6 +135,7 @@ float ChessEngine::alphaBeta(Board& board, int depth, float alpha, float beta, b
         float maxEval = -std::numeric_limits<float>::infinity();
         for(Move& move : orderedMoves){
             Board testBoard = board;
+            testBoard.makeMove(move);
             testBoard.whiteToMove = !testBoard.whiteToMove;
 
             float eval = alphaBeta(testBoard, depth -1, alpha, beta, false);
@@ -161,22 +163,20 @@ float ChessEngine::alphaBeta(Board& board, int depth, float alpha, float beta, b
     }
 }
 
-float ChessEngine::evaluatePosition(const Board& board){
-    float score = 0.0f;
-
-    score += evaluateMaterial(board);
-
-    if(level_ >= EngineLevel::EASY){
-        score += evaluatePieceSquares(board) * 0.3f;
-        score += evaluateMobility(board) * 0.1f;
+float ChessEngine::evaluatePosition(const Board& board) {
+    float score = PieceSquareTables::evaluateTapered(board);
+    
+    // Add other evaluation components with reduced weights
+    if (level_ >= EngineLevel::EASY) {
+        score += evaluateMobility(board) * 0.05f;
     }
-
-    if(level_ >= EngineLevel::MEDIUM){
-        score += evaluateKingSafety(board) * 0.2f;
-        score += evaluatePawnStructure(board) * 0.1f;
+    
+    if (level_ >= EngineLevel::MEDIUM) {
+        score += evaluateKingSafety(board) * 0.1f;
+        score += evaluatePawnStructure(board) * 0.05f;
     }
-
-    return board.whiteToMove ? score : -score;
+    
+    return score;
 }
 
 float ChessEngine::evaluateMaterial(const Board& board){
@@ -234,7 +234,8 @@ int ChessEngine::getMoveOrderScore(const Board& board, const Move& move){
     if(move.flags & CAPTURE){
         score += 1000;
         //difference in value of pieces in capture move (capturee - capturer)
-        score += PIECE_VALUES[move.captured] - PIECE_VALUES[board.squares[move.from]] / 10;
+        score += PieceSquareTables::MG_PIECE_VALUES[move.captured] - 
+                 PieceSquareTables::MG_PIECE_VALUES[board.squares[move.from]] / 10;
     }
 
     if(move.flags & PROMOTION){
