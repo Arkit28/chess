@@ -188,7 +188,7 @@ const int EG_KING_TABLE[64] = {
     -53, -34, -21, -11, -28, -14, -24, -43,
 };
 
-// Pointer arrays for easy access
+//Pointer arrays for easy access
 const int* MG_PIECE_TABLES[6] = {
     MG_PAWN_TABLE, MG_KNIGHT_TABLE, MG_BISHOP_TABLE,
     MG_ROOK_TABLE, MG_QUEEN_TABLE, MG_KING_TABLE
@@ -199,17 +199,7 @@ const int* EG_PIECE_TABLES[6] = {
     EG_ROOK_TABLE, EG_QUEEN_TABLE, EG_KING_TABLE
 };
 
-// Utility functions
-int getPieceType(int piece) {
-    if (piece == EMPTY) return -1;
-    return (piece - 1) / 2;  // Converts piece enum to 0-5 range
-}
-
-int flipSquare(int sq) {
-    return sq ^ 56;  // Flips rank: rank 0 <-> rank 7, etc.
-}
-
-// Calculate current game phase (0 = endgame, 24 = opening)
+//calculate current game phase (0 = endgame, 24 = opening)
 int calculateGamePhase(const Board& board) {
     int gamePhase = 0;
     
@@ -220,7 +210,7 @@ int calculateGamePhase(const Board& board) {
         }
     }
     
-    // Cap at 24 (max opening phase) in case of early promotions
+    // cap at 24 (max opening phase) in case of early promotions
     return std::min(gamePhase, 24);
 }
 
@@ -259,6 +249,6 @@ float evaluateTapered(const Board& board) {
     
     // Final tapered score
     return (mgRelative * mgPhase + egRelative * egPhase) / 24.0f;
-}
+    }
 
 } // namespace PieceSquareTables

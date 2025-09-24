@@ -81,17 +81,32 @@ void Board::setStartPos() {
 
 }
 
-void Board::print() const {
-    for(int r = 7; r >= 0; r--){
-        std::cout << r+1 << "  ";
-        for(int f = 0; f < 8; f++){
-            int sq = r * 8 + f;
-            std::cout << EnumToChar(squares[sq]) << " ";
-       
+void Board::print(bool white) const {
+    if(white){
+        for(int r = 7; r >= 0; r--){
+            std::cout << r+1 << "  ";
+            for(int f = 0; f < 8; f++){
+                int sq = r * 8 + f;
+                std::cout << EnumToChar(squares[sq]) << " ";
+        
+            }
+            std::cout << "\n";
         }
-        std::cout << "\n";
+        std::cout << "\n   a b c d e f g h\n"; // file letters
+
     }
-    std::cout << "\n   a b c d e f g h\n"; // file letters
+    else{
+        for(int r = 0; r <= 7; ++r){
+            std::cout << r+1 << "  ";
+            for(int f = 0; f < 8; ++f){
+                int sq = r * 8 + f;
+                std::cout << EnumToChar(squares[sq]) << " "; 
+            }
+            std::cout << "\n";
+        }
+        std::cout << "\n   h g f e d c b a\n"; // file letters
+
+    }
 }
 
 
@@ -239,7 +254,7 @@ void Board::makeMove(Move& m){
         squares[m.from] = EMPTY;
     }
     else if(m.flags == CAPTURE){
-        squares[m.to] = squares[m.from];
+        squares[m.to] = squares[m.from];        // need to account for case where capture->promotion
         squares[m.from] = EMPTY;
     }
     else if(m.flags == EN_PASSANT){
@@ -254,7 +269,7 @@ void Board::makeMove(Move& m){
     }
     else if(m.flags == PROMOTION){
         if(squares[m.from] == W_PAWN){
-            squares[m.to] = W_QUEEN;          //to be changed
+            squares[m.to] = W_QUEEN;          //to be changed - call a function to let player decide promotion piece
             squares[m.from] = EMPTY;
         }
         else{
@@ -315,7 +330,7 @@ void Board::UpdateCastlingRights(Move& m){
 }
 
 
-int Board::parseSquare(const std::string square){
+int Board::parseSquare(const std::string square, bool whitePerspective){
     if(square.size() != 2){
         return -1;
     }
@@ -326,15 +341,19 @@ int Board::parseSquare(const std::string square){
     if(file < 'a' || file > 'h') return -1;
     if(rank < '1' || rank > '8') return -1;
 
-    return int(file - 'a') + (int(rank - '1') * 8);
+    if(whitePerspective)
+        return int(file - 'a') + (int(rank - '1') * 8);
+    else
+        return (7 - int(file - 'a')) + ((7 - int(rank - '1')) * 8);
+
 }
 
 
-Move Board::parseMove(const std::string& Move){
+Move Board::parseMove(const std::string& Move, bool whitePerspective){
     if(Move.size() != 4) return {-1, -1, EMPTY, EMPTY, 0};
 
-    int start = parseSquare(Move.substr(0,2));
-    int end = parseSquare(Move.substr(2,2));
+    int start = parseSquare(Move.substr(0,2), whitePerspective);
+    int end = parseSquare(Move.substr(2,2), whitePerspective);
 
     return {start, end, EMPTY, EMPTY, 0};
 }

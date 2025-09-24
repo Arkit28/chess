@@ -1,6 +1,7 @@
 #include "core/board.hpp"
 #include "core/moveGen.hpp"
 #include "engine/engine.hpp"
+#include "engine/piece_tables.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -44,7 +45,7 @@ public:
                 setUpEngine();
                 break;
             case 3:
-                mode_ = GameMode:: Engine_v_Player;
+                mode_ = GameMode::Engine_v_Player;
                 setUpEngine();
                 break;
             default:
@@ -98,14 +99,15 @@ private:
     ChessEngine* engine_;
 
     void displayGameState(){
+
         std::cout << "\n" << "==========================" << "\n\n\n";
-        board.print(); 
+        board.print(board.whiteToMove);
         std::cout << "\n FEN: " << board.toFEN() << "\n";
 
-    if(board.isCheck(board.whiteToMove)){
-        std::cout << "*** " << (board.whiteToMove ? "White" : "Black") << " is in check ***\n";
-    }
-    std::cout << "\n";
+        if(board.isCheck(board.whiteToMove)){
+            std::cout << "*** " << (board.whiteToMove ? "White" : "Black") << " is in check ***\n";
+        }
+        std::cout << "\n";
     }
 
     void setUpEngine(){
@@ -158,11 +160,12 @@ private:
             exit(0);
         }
         else if(input == "resign"){
-            std::cout << (board.whiteToMove ? "White" : "Black") << " has resigned. " << (board.whiteToMove ? "Black" : "White") << " wins!\n"; 
+            std::cout << (board.whiteToMove ? "White" : "Black") << " has resigned. " << (board.whiteToMove ? "Black" : "White") << " wins!\n";
+            exit(0); 
         }
 
 
-        Move inputMove = board.parseMove(input);
+        Move inputMove = board.parseMove(input, board.whiteToMove);
         if(inputMove.from == -1){
             std::cout << "Invalid move format. \n";
             return false;

@@ -39,11 +39,11 @@ public:
     void UpdateCastlingRights(Move& m);
 
     void setStartPos();
-    void print() const;
+    void print(bool white) const;
     std::string toFEN() const;
 
-    int parseSquare(const std::string square);
-    Move parseMove(const std::string& Move);
+    int parseSquare(const std::string square, bool whitePerspective);
+    Move parseMove(const std::string& Move, bool whitePerspective);
     Move findMatchingMove(const std::vector<Move>& legalMoves, const Move& inputMove);
     bool IsMoveLegal(const Move& move, const std::vector<Move>& legalMoves);
 
