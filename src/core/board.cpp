@@ -98,7 +98,7 @@ void Board::print(bool white) const {
     else{
         for(int r = 0; r <= 7; ++r){
             std::cout << r+1 << "  ";
-            for(int f = 0; f < 8; ++f){
+            for(int f = 7; f >= 0; --f){
                 int sq = r * 8 + f;
                 std::cout << EnumToChar(squares[sq]) << " "; 
             }
@@ -344,7 +344,7 @@ int Board::parseSquare(const std::string square, bool whitePerspective){
     if(whitePerspective)
         return int(file - 'a') + (int(rank - '1') * 8);
     else
-        return (7 - int(file - 'a')) + ((7 - int(rank - '1')) * 8);
+        return (int(file - 'a')) + ((7 - int(rank - '1')) * 8);
 
 }
 
@@ -489,7 +489,7 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         int fd = std::abs(file(t) - file(square));
         int rd = std::abs(rank(t) - rank(square));
         if(!((fd == 1 && rd == 2) || (fd == 2 && rd == 1))) continue;
-        if(byWhite && squares[t] == W_KNIGHT && squares[t] == B_KNIGHT) return true;
+        if((byWhite && squares[t] == W_KNIGHT) || (!byWhite && squares[t] == B_KNIGHT)) return true;
     }
 
     
@@ -561,7 +561,7 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         int fd = std::abs(file(t) - file(square));
         int rd = std::abs(rank(t) - rank(square));
         if(fd <= 1 && rd <= 1){
-            if (byWhite && squares[t] == W_KING && squares[t] == B_KING) return true;
+            if ((byWhite && squares[t] == W_KING) || (!byWhite && squares[t] == B_KING)) return true;
         }
     }
 
