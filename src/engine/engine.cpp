@@ -115,7 +115,7 @@ float ChessEngine::alphaBeta(Board& board, int depth, float alpha, float beta, b
     }
 
     if(depth == 0){
-        return evaluatePosition(board);
+        return quiescenceSearch(board, alpha, beta, maximisingPlayer);
     }
 
     std::vector<Move> legalMoves = board.generateLegalMoves();
@@ -287,8 +287,75 @@ float ChessEngine::minimax(Board& board, int depth, bool maximizingPlayer) {
 }
 
 float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool maximizingPlayer) {
-    // TODO: Implement quiescence search
-    return evaluatePosition(board);
+    nodesSearched_++;
+
+    //Stand PAT eval - static eval without involving captures
+    float standPat = evaluatePosition(board);
+    if(!maximizingPlayer) standPat = -standPat;
+
+    //Beta cutoff - if this position is already good, opposition will try to prevent the current line
+    if(standPat >= beta) return beta;
+
+    //Alpha update - update best score so far
+    if(standPat > alpha) alpha = standPat;
+
+    //generate only noisy moves - moves that change eval by a lot
+    std::vector<Move> noisyMoves = generateNoisyMoves(board);
+
+    //if no captures/checks possible, position is quiet
+    if(noisyMoves.empty()) return standPat;
+
+    //order moves by expected value - best captures first (MVV - LVA)
+    orderNoisyMoves(board, noisyMoves);
+
+    //Search noisy moves
+    for(Move& move : noisyMoves){
+        Board testBoard;
+        testBoard.makeMove(move);
+        testBoard.whiteToMove = !testBoard.whiteToMove;
+
+        //recursively search this noisy position
+        float score = -quiescenceSearch(testBoard, -beta, -alpha, !maximizingPlayer);
+
+        if(score >= beta) return beta;
+        if(score > alpha) alpha = score;
+
+    }
+
+    return alpha;
+
+}
+
+std::vector<Move> ChessEngine::generateNoisyMoves(const Board& board){
+    std::vector<Move> allMoves = const_cast<Board&>(board).generateLegalMoves();
+    std::vector<Move> noisyMoves;
+
+    for(const Move& move : allMoves){
+        if(move.flags & CAPTURE || move.flags & PROMOTION ){  //optional - check for moves that cause checks
+            noisyMoves.push_back(move);
+        }
+    }
+    return noisyMoves;
+}
+
+void ChessEngine::orderNoisyMoves(const Board& board, std::vector<Move>& moves){
+    std::sort(moves.begin(), moves.end(), [&](const Move& a, const Move& b){
+        //MVV-LVA
+        int scoreA = 0, scoreB = 0;
+        
+        if(a.flags & CAPTURE){
+            scoreA = PieceSquareTables::MG_PIECE_VALUES[a.captured] - 
+                     PieceSquareTables::MG_PIECE_VALUES[board.squares[a.from]] / 10;
+        }
+
+        if(b.flags & CAPTURE) {
+            scoreB =PieceSquareTables::MG_PIECE_VALUES[b.captured] - 
+                     PieceSquareTables::MG_PIECE_VALUES[board.squares[b.from]] / 10;
+        }
+
+        return scoreA > scoreB;
+    
+    });
 }
 
 uint64_t ChessEngine::hashPosition(const Board& board) {

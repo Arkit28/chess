@@ -63,6 +63,9 @@ private:
     bool isTimeUp() const;
     void startSearch();
     uint64_t hashPosition(const Board& board);
+    //for quiesence search
+    std::vector<Move> generateNoisyMoves(const Board& board);
+    void orderNoisyMoves(const Board& board, std::vector<Move>& moves);
     
     //TRANSPOSITION TABLE
     void storeTTEntry(uint64_t key, float score, int depth, int flag, const Move& bestMove);
