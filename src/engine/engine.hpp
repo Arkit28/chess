@@ -45,7 +45,7 @@ private:
     //SEARCH ALGORITHMS
     float minimax(Board& board, int depth, bool maximizingPlayer);
     float alphaBeta(Board& board, int depth, float alpha, float beta, bool maximizingPlayer);
-    float quiescenceSearch(Board& board, float alpha, float beta, bool maximizingPlayer);
+    float quiescenceSearch(Board& board, float alpha, float beta, bool maximizingPlayer, int qDepth);
     
     //EVALUATION FUNCTIONS
     float evaluatePosition(const Board& board);

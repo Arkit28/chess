@@ -93,7 +93,7 @@ Move ChessEngine::getBestMove(const Board& board, int depth, int timeLimit){
         testBoard.makeMove(move);
         testBoard.whiteToMove = !testBoard.whiteToMove;
 
-        float score = -alphaBeta(testBoard, depth -1, std::numeric_limits<float>::infinity(),
+        float score = -alphaBeta(testBoard, depth -1, -std::numeric_limits<float>::infinity(),
                                 std::numeric_limits<float>::infinity(), false);
         
         if(score > bestScore){
@@ -115,7 +115,7 @@ float ChessEngine::alphaBeta(Board& board, int depth, float alpha, float beta, b
     }
 
     if(depth == 0){
-        return quiescenceSearch(board, alpha, beta, maximisingPlayer);
+        return quiescenceSearch(board, alpha, beta, maximisingPlayer, 0);
     }
 
     std::vector<Move> legalMoves = board.generateLegalMoves();
@@ -167,9 +167,9 @@ float ChessEngine::evaluatePosition(const Board& board) {
     float score = PieceSquareTables::evaluateTapered(board);
     
     // Add other evaluation components with reduced weights
-    if (level_ >= EngineLevel::EASY) {
-        score += evaluateMobility(board) * 0.05f;
-    }
+    //if (level_ >= EngineLevel::EASY) {
+    //    score += evaluateMobility(board) * 0.05f;
+    //}
     
     if (level_ >= EngineLevel::MEDIUM) {
         score += evaluateKingSafety(board) * 0.1f;
@@ -286,8 +286,17 @@ float ChessEngine::minimax(Board& board, int depth, bool maximizingPlayer) {
                      std::numeric_limits<float>::infinity(), maximizingPlayer);
 }
 
-float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool maximizingPlayer) {
+float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool maximizingPlayer, int qDepth) {
+
+    //URGENT - FIX Quiesence search 
+    
     nodesSearched_++;
+
+    // LIMIT 1: Max quiescence depth (prevent infinite recursion)
+    const int MAX_Q_DEPTH = 6;  // Don't search captures more than 6 moves deep
+    if (qDepth >= MAX_Q_DEPTH) {
+        return evaluatePosition(board) * (maximizingPlayer ? 1 : -1);
+    }
 
     //Stand PAT eval - static eval without involving captures
     float standPat = evaluatePosition(board);
@@ -295,6 +304,12 @@ float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool 
 
     //Beta cutoff - if this position is already good, opposition will try to prevent the current line
     if(standPat >= beta) return beta;
+
+    // LIMIT 2: Delta pruning - don't search hopeless captures
+    const float BIG_DELTA = 900;  // Queen value
+    if (standPat < alpha - BIG_DELTA) {
+        return standPat;  // Even winning a queen won't help
+    }
 
     //Alpha update - update best score so far
     if(standPat > alpha) alpha = standPat;
@@ -305,17 +320,41 @@ float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool 
     //if no captures/checks possible, position is quiet
     if(noisyMoves.empty()) return standPat;
 
+    // LIMIT 3: Only search good captures (reduce branching)
+    std::vector<Move> goodCaptures;
+    for (const Move& move : noisyMoves) {
+        if (move.flags & CAPTURE) {
+            // Only search if capturing piece is less valuable than captured piece
+            if (PieceSquareTables::MG_PIECE_VALUES[move.captured] >= 
+                PieceSquareTables::MG_PIECE_VALUES[board.squares[move.from]]) {
+                goodCaptures.push_back(move);
+            }
+        } else if (move.flags & PROMOTION) {
+            goodCaptures.push_back(move);  // Always search promotions
+        }
+    }
+
+    // LIMIT 4: Max captures per position (prevent explosion)
+    if (goodCaptures.size() > 8) {
+        // Sort and take only best 8 captures
+        orderNoisyMoves(board, goodCaptures);
+        goodCaptures.resize(8);
+    } else {
+        orderNoisyMoves(board, goodCaptures);
+    }
+
+
     //order moves by expected value - best captures first (MVV - LVA)
     orderNoisyMoves(board, noisyMoves);
 
     //Search noisy moves
     for(Move& move : noisyMoves){
-        Board testBoard;
+        Board testBoard = board;
         testBoard.makeMove(move);
         testBoard.whiteToMove = !testBoard.whiteToMove;
 
         //recursively search this noisy position
-        float score = -quiescenceSearch(testBoard, -beta, -alpha, !maximizingPlayer);
+        float score = -quiescenceSearch(testBoard, -beta, -alpha, !maximizingPlayer, qDepth+1);
 
         if(score >= beta) return beta;
         if(score > alpha) alpha = score;
