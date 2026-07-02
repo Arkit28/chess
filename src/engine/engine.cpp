@@ -29,11 +29,11 @@ ChessEngine::ChessEngine(EngineLevel level) : level_(level), maxDepth_(3), timeL
 
     switch(level_){
         case EngineLevel::RANDOM:     maxDepth_ = 0; break;
-        case EngineLevel::BEGINNER:   maxDepth_ = 2; break;
-        case EngineLevel::EASY:       maxDepth_ = 3; break;
-        case EngineLevel::MEDIUM:     maxDepth_ = 4; break;
-        case EngineLevel::HARD:       maxDepth_ = 5; break;
-        case EngineLevel::EXPERT:     maxDepth_ = 6; break;
+        case EngineLevel::BEGINNER:   maxDepth_ = 3; break;
+        case EngineLevel::EASY:       maxDepth_ = 4; break;
+        case EngineLevel::MEDIUM:     maxDepth_ = 5; break;
+        case EngineLevel::HARD:       maxDepth_ = 6; break;
+        case EngineLevel::EXPERT:     maxDepth_ = 7; break;
     }
 }
 
@@ -41,11 +41,11 @@ void ChessEngine::setLevel(EngineLevel level) {
     level_ = level;
     switch(level_) {
         case EngineLevel::RANDOM:     maxDepth_ = 0; break;
-        case EngineLevel::BEGINNER:   maxDepth_ = 2; break;
-        case EngineLevel::EASY:       maxDepth_ = 3; break;
-        case EngineLevel::MEDIUM:     maxDepth_ = 4; break;
-        case EngineLevel::HARD:       maxDepth_ = 5; break;
-        case EngineLevel::EXPERT:     maxDepth_ = 6; break;
+        case EngineLevel::BEGINNER:   maxDepth_ = 3; break;
+        case EngineLevel::EASY:       maxDepth_ = 4; break;
+        case EngineLevel::MEDIUM:     maxDepth_ = 5; break;
+        case EngineLevel::HARD:       maxDepth_ = 6; break;
+        case EngineLevel::EXPERT:     maxDepth_ = 7; break;
     }
 }
 
@@ -348,7 +348,7 @@ float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool 
     orderNoisyMoves(board, noisyMoves);
 
     //Search noisy moves
-    for(Move& move : noisyMoves){
+    for(Move& move : goodCaptures){
         Board testBoard = board;
         testBoard.makeMove(move);
         testBoard.whiteToMove = !testBoard.whiteToMove;

@@ -344,7 +344,7 @@ int Board::parseSquare(const std::string square, bool whitePerspective){
     if(whitePerspective)
         return int(file - 'a') + (int(rank - '1') * 8);
     else
-        return (int(file - 'a')) + ((7 - int(rank - '1')) * 8);
+        return (7 - int(file - 'a')) + ((7 - int(rank - '1')) * 8);;
 
 }
 

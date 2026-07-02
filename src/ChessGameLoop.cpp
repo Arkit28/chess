@@ -165,7 +165,7 @@ private:
         }
 
 
-        Move inputMove = board.parseMove(input, true);
+        Move inputMove = board.parseMove(input, board.whiteToMove);
         std::cout << "parsed: from= " << inputMove.from << "to= " << inputMove.to << "\n";
         if(inputMove.from == -1){
             std::cout << "Invalid move format. \n";
