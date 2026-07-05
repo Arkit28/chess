@@ -31,4 +31,4 @@ Commands for offering a draw and resgination:
 
 ---
 
-Currently working on: Implementing more capable engine through evaluation functions and depth search algorithms.
+Currently working through nextSteps.md plan outline.
