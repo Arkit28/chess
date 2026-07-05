@@ -89,6 +89,14 @@ build CMakeFiles/chess.dir/src/engine/engine.cpp.obj: CXX_COMPILER__chess_unscan
   OBJECT_DIR = CMakeFiles\chess.dir
   OBJECT_FILE_DIR = CMakeFiles\chess.dir\src\engine
 
+build CMakeFiles/chess.dir/src/engine/piece_tables.cpp.obj: CXX_COMPILER__chess_unscanned_Debug C$:/projects/chess/src/engine/piece_tables.cpp || cmake_object_order_depends_target_chess
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\chess.dir\src\engine\piece_tables.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine
+  OBJECT_DIR = CMakeFiles\chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\chess.dir\src\engine
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target chess
@@ -97,7 +105,7 @@ build CMakeFiles/chess.dir/src/engine/engine.cpp.obj: CXX_COMPILER__chess_unscan
 #############################################
 # Link the executable chess.exe
 
-build chess.exe: CXX_EXECUTABLE_LINKER__chess_Debug CMakeFiles/chess.dir/src/ChessGameLoop.cpp.obj CMakeFiles/chess.dir/src/core/board.cpp.obj CMakeFiles/chess.dir/src/core/move.cpp.obj CMakeFiles/chess.dir/src/core/moveGen.cpp.obj CMakeFiles/chess.dir/src/engine/engine.cpp.obj
+build chess.exe: CXX_EXECUTABLE_LINKER__chess_Debug CMakeFiles/chess.dir/src/ChessGameLoop.cpp.obj CMakeFiles/chess.dir/src/core/board.cpp.obj CMakeFiles/chess.dir/src/core/move.cpp.obj CMakeFiles/chess.dir/src/core/moveGen.cpp.obj CMakeFiles/chess.dir/src/engine/engine.cpp.obj CMakeFiles/chess.dir/src/engine/piece_tables.cpp.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

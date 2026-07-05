@@ -80,10 +80,11 @@ These are not required to fix currently broken behavior and should remain separa
 
 The immediate implementation should be narrow and regression-test driven.
 
+- [x] Populate README with gameplay notation.
 - [ ] Add a test target without introducing third-party dependencies.
-- [ ] Fix the build by including `piece_tables.cpp`.
+- [x] Fix the build by including `piece_tables.cpp`.
 - [ ] Add baseline tests that document current intended behavior before changing rules.
-- [ ] Fix board-state reset in `setStartPos()`.
+- [x] Fix board-state reset in `setStartPos()`.
 - [ ] Fix combined-flag handling in `Board::makeMove()`, especially capture-promotion.
 - [ ] Fix castling rights updates, rook-side mapping, rook presence checks, and black queenside target.
 - [ ] Fix black pawn capture generation and black capture-promotion metadata.

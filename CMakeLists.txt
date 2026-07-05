@@ -12,6 +12,7 @@ add_executable(chess
     src/core/move.cpp
     src/core/moveGen.cpp
     src/engine/engine.cpp
+    src/engine/piece_tables.cpp
 )
 
 # Include directories for headers

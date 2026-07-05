@@ -43,6 +43,8 @@ Board::Board() {
 }
 
 void Board::setStartPos() {
+    squares.fill(EMPTY);
+
     squares[0] = W_ROOK;
     squares[1] = W_KNIGHT;
     squares[2] = W_BISHOP;

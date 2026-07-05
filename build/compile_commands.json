@@ -28,5 +28,11 @@
   "command": "C:\\prog\\ucrt64\\bin\\g++.exe -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine -g -std=gnu++17 -o CMakeFiles\\chess.dir\\src\\engine\\engine.cpp.obj -c C:\\projects\\chess\\src\\engine\\engine.cpp",
   "file": "C:/projects/chess/src/engine/engine.cpp",
   "output": "C:/projects/chess/build/CMakeFiles/chess.dir/src/engine/engine.cpp.obj"
+},
+{
+  "directory": "C:/projects/chess/build",
+  "command": "C:\\prog\\ucrt64\\bin\\g++.exe -IC:/projects/chess/src -IC:/projects/chess/src/core -IC:/projects/chess/src/engine -g -std=gnu++17 -o CMakeFiles\\chess.dir\\src\\engine\\piece_tables.cpp.obj -c C:\\projects\\chess\\src\\engine\\piece_tables.cpp",
+  "file": "C:/projects/chess/src/engine/piece_tables.cpp",
+  "output": "C:/projects/chess/build/CMakeFiles/chess.dir/src/engine/piece_tables.cpp.obj"
 }
 ]
