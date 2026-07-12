@@ -136,7 +136,7 @@ private:
 
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-        if(engineMove.from == -1){
+        if(engineMove.current_square == -1){
             std::cout << "Engine error: No move found\n";
             return false;
         }
@@ -166,15 +166,15 @@ private:
 
 
         Move inputMove = board.parseMove(input, board.whiteToMove);
-        std::cout << "parsed: from= " << inputMove.from << "to= " << inputMove.to << "\n";
-        if(inputMove.from == -1){
+        std::cout << "parsed: from= " << inputMove.current_square << "to= " << inputMove.target_square << "\n";
+        if(inputMove.current_square == -1){
             std::cout << "Invalid move format. \n";
             return false;
         }
 
         std::vector<Move>legalMoves = board.generateLegalMoves();
         Move actualMove = board.findMatchingMove(legalMoves, inputMove);
-        if(actualMove.from == -1){
+        if(actualMove.current_square == -1){
             std::cout << "Illegal Move!\n";
             return false;
         }

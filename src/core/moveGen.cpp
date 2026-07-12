@@ -187,7 +187,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         if(onBoard(forward) && b.squares[forward] == EMPTY){
 
             if(rank(forward) == 7){
-                moves.push_back({square, forward, b.squares[forward], W_QUEEN, MoveFlags::PROMOTION});  // EXPAND TO OTHER PIECES
+                moves.push_back({square, forward, b.squares[forward], W_QUEEN, MoveFlags::PROMOTION});  // func to allow promotion piece selection
             }
             else{
                 moves.push_back({square, forward, EMPTY, EMPTY, MoveFlags::QUIET});
@@ -201,7 +201,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         //White pawn captures
         if(file(square) != 0 && onBoard(capture_left) && isBlack(b.squares[capture_left])){
             if(rank(capture_left) == 7){
-                moves.push_back({square, capture_left, b.squares[capture_left], W_QUEEN, MoveFlags::CAPTURE | MoveFlags::PROMOTION});
+                moves.push_back({square, capture_left, b.squares[capture_left], W_QUEEN, MoveFlags::CAPTURE_N_PROMOTION});
 
             }
             else{
@@ -210,7 +210,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         }
         if(file(square) != 7 && onBoard(capture_right) && isBlack(b.squares[capture_right])){ 
             if(rank(capture_right) == 7){
-                moves.push_back({square, capture_right, b.squares[capture_right], W_QUEEN, MoveFlags::CAPTURE | MoveFlags::PROMOTION});
+                moves.push_back({square, capture_right, b.squares[capture_right], W_QUEEN, MoveFlags::CAPTURE_N_PROMOTION});
             }
             else{
                 moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE});
@@ -251,7 +251,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         //Black pawn captures
         if(file(square) != 0 && onBoard(capture_left) && isWhite(b.squares[capture_left])){
             if(rank(forward) == 0){
-                moves.push_back({square, capture_left, b.squares[capture_left], B_QUEEN, MoveFlags::PROMOTION | MoveFlags::CAPTURE});
+                moves.push_back({square, capture_left, b.squares[capture_left], B_QUEEN, MoveFlags::CAPTURE_N_PROMOTION});
             }
             else{
                 moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
@@ -259,7 +259,7 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         }
         if(file(square) != 7 && onBoard(capture_right) && isWhite(b.squares[capture_right])){
             if(rank(capture_left) == 0){
-                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::PROMOTION | MoveFlags::CAPTURE});
+                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE_N_PROMOTION});
             }
             else{
                 moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
@@ -431,7 +431,7 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
            && !isSquareAttacked(b, 60, true)
            && !isSquareAttacked(b, 59, true)
            && !isSquareAttacked(b, 58, true)){
-            moves.push_back({square, 57, b.squares[square], EMPTY, MoveFlags::CASTLING});
+            moves.push_back({square, 58, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
         if(b.castlingrights.B_KingSide == true && b.squares[61] == EMPTY && b.squares[62] == EMPTY
            && !isSquareAttacked(b, 60, true)

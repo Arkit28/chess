@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 
+
 std::string EnumToChar(int square){
     switch (square){
         case EMPTY:
@@ -115,17 +116,21 @@ void Board::print(bool white) const {
 void Board::updateGameState(const Move& move){
     UpdateCastlingRights(const_cast<Move&>(move));
 
+
+    // needs to fixed, currently never takes any condition
     enPassantSquare = -1;
     if(move.flags == DOUBLE_PAWN_PUSH){
-        if(squares[move.to] == W_PAWN){
-            enPassantSquare = move.to - 8;
+        if(squares[move.target_square] == W_PAWN){
+            enPassantSquare = move.target_square - 8;
         }
-        else if(squares[move.to] == B_PAWN){
-            enPassantSquare = move.to + 8;
+        else if(squares[move.target_square] == B_PAWN){
+            enPassantSquare = move.target_square + 8;
         }
     }
 
-    if(move.flags & CAPTURE || move.flags == EN_PASSANT || squares[move.to] == W_PAWN || squares[move.to] == B_PAWN){
+    if(move.flags & CAPTURE || move.flags == EN_PASSANT ||
+        squares[move.target_square] == W_PAWN || squares[move.target_square] == B_PAWN ||
+        move.flags & PROMOTION || move.flags & CAPTURE_N_PROMOTION){
         halfmoveClock = 0;
     }
     else{
@@ -248,87 +253,118 @@ std::string Board::toFEN() const{
 }
 
 
+
+
 // need to make CAPTURE + PROMOTION simultaneous  logic
 void Board::makeMove(Move& m){
+
+    // Piece is being transferred to a new square, so target_square <- current_square for a piece moving 
+    // from one square to another
+
     // normal moves - Flag = QUIET
-    if(m.flags == QUIET || m.flags == DOUBLE_PAWN_PUSH){
-        squares[m.to] = squares[m.from];
-        squares[m.from] = EMPTY;
-    }
-    else if(m.flags == CAPTURE){
-        squares[m.to] = squares[m.from];        // need to account for case where capture->promotion
-        squares[m.from] = EMPTY;
-    }
-    else if(m.flags == EN_PASSANT){
-        squares[m.to] = squares[m.from];
-        squares[m.from] = EMPTY;
-        if(squares[m.to] == W_PAWN){
-            squares[m.to - 8] = EMPTY;
-        }
-        else{
-            squares[m.to + 8] = EMPTY;
-        }
-    }
-    else if(m.flags == PROMOTION){
-        if(squares[m.from] == W_PAWN){
-            squares[m.to] = W_QUEEN;          //to be changed - call a function to let player decide promotion piece
-            squares[m.from] = EMPTY;
-        }
-        else{
-            squares[m.to] = B_QUEEN;
-            squares[m.from] = EMPTY;
-        }
-    }
-    if(m.flags == CASTLING){
-        if(m.to == 2){
-            squares[m.to] = W_KING;
-            squares[3] = W_ROOK;
-            squares[m.from] = EMPTY;
-            squares[0] = EMPTY;
-            castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
-        }
-        else if(m.to == 6){
-            squares[m.to] = W_KING;
-            squares[5] = W_ROOK;
-            squares[m.from] = EMPTY;
-            squares[7] = EMPTY;  
-            castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
 
-        }
-        else if(m.to == 58){
-            squares[m.to] = B_KING;
-            squares[59] = B_ROOK;
-            squares[m.from] = EMPTY;
-            squares[56] = EMPTY;
-            castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
-        }
-        else if(m.to == 62){
-            squares[m.to] = B_KING;
-            squares[61] = B_ROOK;
-            squares[m.from] = EMPTY;
-            squares[63] = EMPTY;
-            castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
+    switch (m.flags) {
+        case QUIET:
+            squares[m.target_square] = squares[m.current_square];
+            squares[m.current_square] = EMPTY;
+            break;
+        
+        case DOUBLE_PAWN_PUSH:
+            squares[m.target_square] = squares[m.current_square];
+            squares[m.current_square] = EMPTY;
+            break;
 
-        }
-    }
+        case CAPTURE:
+            squares[m.target_square] = squares[m.current_square];
+            squares[m.current_square] = EMPTY;
+            break;
+
+        case EN_PASSANT:
+            squares[m.target_square] = squares[m.current_square];
+            squares[m.current_square] = EMPTY;
+            if(squares[m.target_square] == W_PAWN){
+                squares[m.target_square - 8] = EMPTY;
+            }
+            else{
+                squares[m.target_square + 8] = EMPTY;
+            }
+            break;
+
+        case PROMOTION:
+            if(squares[m.current_square] == W_PAWN){
+                squares[m.target_square] = W_QUEEN;          //to be changed - call a function to let player decide promotion piece
+                squares[m.current_square] = EMPTY;
+            }
+            else{
+                squares[m.target_square] = B_QUEEN;
+                squares[m.current_square] = EMPTY;
+            }
+            break;
+        
+        case CASTLING:
+            if(m.target_square == 2){
+                squares[m.target_square] = W_KING;
+                squares[3] = W_ROOK;
+                squares[m.current_square] = EMPTY;
+                squares[0] = EMPTY;
+                castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
+            }
+            else if(m.target_square == 6){
+                squares[m.target_square] = W_KING;
+                squares[5] = W_ROOK;
+                squares[m.current_square] = EMPTY;
+                squares[7] = EMPTY;  
+                castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
+
+            }
+            else if(m.target_square == 58){
+                squares[m.target_square] = B_KING;
+                squares[59] = B_ROOK;
+                squares[m.current_square] = EMPTY;
+                squares[56] = EMPTY;
+                castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
+            }
+            else if(m.target_square == 62){
+                squares[m.target_square] = B_KING;
+                squares[61] = B_ROOK;
+                squares[m.current_square] = EMPTY;
+                squares[63] = EMPTY;
+                castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
+            }
+            break;
+
+        case CAPTURE_N_PROMOTION:
+            squares[m.target_square] = squares[m.current_square];
+            squares[m.current_square] = EMPTY;
+            if(squares[m.target_square] == W_PAWN){
+                squares[m.target_square] = W_QUEEN;        //needs promotion choice
+            }
+            else {
+                squares[m.target_square] = B_QUEEN;        //needs promotion choice
+            }
+            break;
+
+
+    }; 
+
 }
 
 
-
+// Needs rework to be compliant with current structure
 void Board::UpdateCastlingRights(Move& m){
-    if(squares[m.from] == Piece::W_KING){
+    if(squares[m.target_square] == Piece::W_KING){
         castlingrights.W_KingSide = false;
         castlingrights.W_QueenSide = false;
     }
-    if(squares[m.from] == Piece::B_KING){
+    if(squares[m.target_square] == Piece::B_KING){
         castlingrights.B_KingSide = false;
         castlingrights.B_QueenSide = false;
     }
 
-    if(m.from == 0 || m.to == 0) castlingrights.W_KingSide = false;
-    if(m.from == 7 || m.to == 7) castlingrights.W_QueenSide = false;
-    if(m.from == 56 || m.to == 56) castlingrights.B_KingSide = false;
-    if(m.from == 63 || m.to == 63) castlingrights.B_QueenSide = false;
+    if(m.target_square == 0 || m.current_square == 0) castlingrights.W_KingSide = false;
+    if(m.target_square == 7 || m.current_square == 7) castlingrights.W_QueenSide = false;
+    if(m.target_square == 56 || m.current_square == 56) castlingrights.B_KingSide = false;
+    if(m.target_square == 63 || m.current_square == 63) castlingrights.B_QueenSide = false;
 }
 
 
@@ -362,7 +398,7 @@ Move Board::parseMove(const std::string& Move, bool whitePerspective){
 
 Move Board::findMatchingMove(const std::vector<Move>& legalMoves, const Move& inputMove){
     for(const auto& move : legalMoves){
-        if(move.from == inputMove.from && move.to == inputMove.to){
+        if(move.target_square == inputMove.target_square && move.current_square == inputMove.current_square){
             return move;
         }
     }
@@ -371,7 +407,7 @@ Move Board::findMatchingMove(const std::vector<Move>& legalMoves, const Move& in
 
 bool Board::IsMoveLegal(const Move& move, const std::vector<Move>& legalMoves){
     for(const auto& legalMove : legalMoves){
-        if(legalMove.from == move.from && legalMove.to == move.to){
+        if(legalMove.target_square == move.target_square && legalMove.current_square == move.current_square){
             return true;
         }
     }
@@ -389,8 +425,8 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
         if(onBoard(square - 9) && squares[square - 9] == B_PAWN) return true;
     }
 
-    int knightOffset[8] = {6, -6, 10, -10, 15, -15, 17, -17};
-    for(int offset : knightOffset){
+    int knighcurrent_squareffset[8] = {6, -6, 10, -10, 15, -15, 17, -17};
+    for(int offset : knighcurrent_squareffset){
         int target = square + offset;
         if(onBoard(target)){
             int fileDiff = std::abs(file(target) - file(square));
@@ -471,21 +507,21 @@ bool IsBlack(const int piece){
 bool Board::isSquareAttacked(int square, bool byWhite) const{
     // pawn attacks
     if(byWhite){
-        int from = square - 7;
-        if(onBoard(from) && file(from) == file(square) - 1 && squares[from] == W_PAWN) return true;
-        from = square - 9;
-        if(onBoard(from) && file(from) == file(square) + 1 && squares[from] == W_PAWN) return true;
+        int target_square = square - 7;
+        if(onBoard(target_square) && file(target_square) == file(square) - 1 && squares[target_square] == W_PAWN) return true;
+        target_square = square - 9;
+        if(onBoard(target_square) && file(target_square) == file(square) + 1 && squares[target_square] == W_PAWN) return true;
     } 
     else{
-        int from = square + 7;
-        if(onBoard(from) && file(from) == file(square) + 1 && squares[from] == B_PAWN) return true;
-        from = square + 9;
-        if(onBoard(from) && file(from) == file(square) - 1 && squares[from] == B_PAWN) return true;
+        int target_square = square + 7;
+        if(onBoard(target_square) && file(target_square) == file(square) + 1 && squares[target_square] == B_PAWN) return true;
+        target_square = square + 9;
+        if(onBoard(target_square) && file(target_square) == file(square) - 1 && squares[target_square] == B_PAWN) return true;
     }
 
     // knight
-    const int knightOffsets[8] = {6, -6, 10, -10, 15, -15, 17, -17};
-    for(int d : knightOffsets){
+    const int knighcurrent_squareffsets[8] = {6, -6, 10, -10, 15, -15, 17, -17};
+    for(int d : knighcurrent_squareffsets){
         int t = square + d;
         if(!onBoard(t)) continue;
         int fd = std::abs(file(t) - file(square));
@@ -514,7 +550,7 @@ bool Board::isSquareAttacked(int square, bool byWhite) const{
                 t += dir;
                 continue;
             }
-            // if piece belongs to attacker
+            // if piece belongs current_square attacker
             if(isAttackerPiece(p)){
                 if ((byWhite && (p == W_ROOK || p == W_QUEEN)) ||
                     (!byWhite && (p == B_ROOK || p == B_QUEEN)) ){
