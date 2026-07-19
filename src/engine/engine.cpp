@@ -235,7 +235,7 @@ int ChessEngine::getMoveOrderScore(const Board& board, const Move& move){
         score += 1000;
         //difference in value of pieces in capture move (capturee - capturer)
         score += PieceSquareTables::MG_PIECE_VALUES[move.captured] - 
-                 PieceSquareTables::MG_PIECE_VALUES[board.squares[move.from]] / 10;
+                 PieceSquareTables::MG_PIECE_VALUES[board.squares[move.current_square]] / 10;
     }
 
     if(move.flags & PROMOTION){
@@ -246,8 +246,8 @@ int ChessEngine::getMoveOrderScore(const Board& board, const Move& move){
         score += 100;
     }
 
-    int toFile = file(move.to);
-    int toRank = rank(move.to);
+    int toFile = file(move.target_square);
+    int toRank = rank(move.target_square);
     if(toFile >= 2 && toFile <= 5 && toRank >= 2 && toRank <= 5){
         score += 10;
     }
@@ -311,13 +311,11 @@ float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool 
         return standPat;  // Even winning a queen won't help
     }
 
-    //Alpha update - update best score so far
+    
     if(standPat > alpha) alpha = standPat;
 
-    //generate only noisy moves - moves that change eval by a lot
     std::vector<Move> noisyMoves = generateNoisyMoves(board);
 
-    //if no captures/checks possible, position is quiet
     if(noisyMoves.empty()) return standPat;
 
     // LIMIT 3: Only search good captures (reduce branching)
@@ -326,7 +324,7 @@ float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool 
         if (move.flags & CAPTURE) {
             // Only search if capturing piece is less valuable than captured piece
             if (PieceSquareTables::MG_PIECE_VALUES[move.captured] >= 
-                PieceSquareTables::MG_PIECE_VALUES[board.squares[move.from]]) {
+                PieceSquareTables::MG_PIECE_VALUES[board.squares[move.current_square]]) {
                 goodCaptures.push_back(move);
             }
         } else if (move.flags & PROMOTION) {
@@ -344,7 +342,7 @@ float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool 
     }
 
 
-    //order moves by expected value - best captures first (MVV - LVA)
+    // best captures first (MVV - LVA)
     orderNoisyMoves(board, noisyMoves);
 
     //Search noisy moves
@@ -384,12 +382,12 @@ void ChessEngine::orderNoisyMoves(const Board& board, std::vector<Move>& moves){
         
         if(a.flags & CAPTURE){
             scoreA = PieceSquareTables::MG_PIECE_VALUES[a.captured] - 
-                     PieceSquareTables::MG_PIECE_VALUES[board.squares[a.from]] / 10;
+                     PieceSquareTables::MG_PIECE_VALUES[board.squares[a.current_square]] / 10;
         }
 
         if(b.flags & CAPTURE) {
             scoreB =PieceSquareTables::MG_PIECE_VALUES[b.captured] - 
-                     PieceSquareTables::MG_PIECE_VALUES[board.squares[b.from]] / 10;
+                     PieceSquareTables::MG_PIECE_VALUES[board.squares[b.current_square]] / 10;
         }
 
         return scoreA > scoreB;

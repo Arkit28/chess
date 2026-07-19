@@ -80,8 +80,11 @@ void Board::setStartPos() {
     squares[62] = B_KNIGHT;
     squares[63] = B_ROOK;
 
-    castlingrights = {true, true, true, true};
-
+    castlingrights = {true, true, true, true,};
+    Board::fullMoveNumber = 0;
+    Board::halfmoveClock = 0;
+    Board::enPassantSquare = -1;
+    Board::whiteToMove = true;
 }
 
 void Board::print(bool white) const {
@@ -360,6 +363,9 @@ void Board::UpdateCastlingRights(Move& m){
         castlingrights.B_KingSide = false;
         castlingrights.B_QueenSide = false;
     }
+
+    if(m.current_square == 4 || m.target_square == 4) castlingrights.W_QueenSide = false; castlingrights.W_KingSide == false;
+    if(m.current_square == 60 || m.target_square == 60) castlingrights.B_KingSide = false; castlingrights.B_QueenSide = false;
 
     if(m.target_square == 0 || m.current_square == 0) castlingrights.W_KingSide = false;
     if(m.target_square == 7 || m.current_square == 7) castlingrights.W_QueenSide = false;

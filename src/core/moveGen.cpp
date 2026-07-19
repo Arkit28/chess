@@ -259,10 +259,10 @@ void MoveGen::addPawnMoves(const Board& b, int square, bool white, std::vector<M
         }
         if(file(square) != 7 && onBoard(capture_right) && isWhite(b.squares[capture_right])){
             if(rank(capture_left) == 0){
-                moves.push_back({square, capture_right, b.squares[capture_right], EMPTY, MoveFlags::CAPTURE_N_PROMOTION});
+                moves.push_back({square, capture_right, b.squares[capture_right], B_QUEEN, MoveFlags::CAPTURE_N_PROMOTION});
             }
             else{
-                moves.push_back({square, capture_left, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
+                moves.push_back({square, capture_right, b.squares[capture_left], EMPTY, MoveFlags::CAPTURE});
             }
         }
         
@@ -413,16 +413,18 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     
     // add castling if conditions are met
     if(white){
-        if(b.castlingrights.W_QueenSide == true && b.squares[1] == EMPTY && b.squares[2] == EMPTY && b.squares[3] == EMPTY
+        if(b.castlingrights.W_QueenSide && b.squares[1] == EMPTY && b.squares[2] == EMPTY && b.squares[3] == EMPTY
            && !isSquareAttacked(b, 4, false)
            && !isSquareAttacked(b, 3, false)
-           && !isSquareAttacked(b, 2, false)){
+           && !isSquareAttacked(b, 2, false)
+           && b.squares[0] == W_ROOK && b.squares[4] == W_KING) {
             moves.push_back({square, 2, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
         if(b.castlingrights.W_KingSide == true && b.squares[5] == EMPTY && b.squares[6] == EMPTY
            && !isSquareAttacked(b, 4, false)
            && !isSquareAttacked(b, 5, false)
-           && !isSquareAttacked(b, 6, false)){
+           && !isSquareAttacked(b, 6, false)
+           && b.squares[7] == W_ROOK && b.squares[4] == W_KING){
             moves.push_back({square, 6, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
     }
@@ -430,13 +432,15 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
         if(b.castlingrights.B_QueenSide == true && b.squares[57] == EMPTY && b.squares[58] == EMPTY && b.squares[59] == EMPTY
            && !isSquareAttacked(b, 60, true)
            && !isSquareAttacked(b, 59, true)
-           && !isSquareAttacked(b, 58, true)){
+           && !isSquareAttacked(b, 58, true)
+           && b.squares[56] == B_ROOK && b.squares[60] == B_KING){
             moves.push_back({square, 58, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
         if(b.castlingrights.B_KingSide == true && b.squares[61] == EMPTY && b.squares[62] == EMPTY
            && !isSquareAttacked(b, 60, true)
            && !isSquareAttacked(b, 61, true)
-           && !isSquareAttacked(b, 62, true)){
+           && !isSquareAttacked(b, 62, true)
+           && b.squares[63] == B_ROOK && b.squares[60] == B_KING){
             moves.push_back({square, 62, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
     }
