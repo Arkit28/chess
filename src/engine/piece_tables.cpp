@@ -216,21 +216,19 @@ int calculateGamePhase(const Board& board) {
 
 // Main tapered evaluation function
 float evaluateTapered(const Board& board) {
-    int mgScore[2] = {0, 0};  // [white, black] middlegame scores
-    int egScore[2] = {0, 0};  // [white, black] endgame scores
+    int mgScore[2] = {0, 0};  // [white, black] middlegame score
+    int egScore[2] = {0, 0};  
     
-    // Calculate material + positional scores for both phases
     for (int sq = 0; sq < 64; sq++) {
         int piece = board.squares[sq];
         if (piece == EMPTY) continue;
         
         bool isWhite = piece >= W_PAWN;
         int color = isWhite ? 0 : 1;
-        int pieceType = getPieceType(piece);
+        int pieceType = getPieceType(piece, color);
         
         if (pieceType == -1) continue;
         
-        // Use flipped square for black pieces (they see board from opposite perspective)
         int tableSquare = isWhite ? sq : flipSquare(sq);
         
         // Add material value + piece-square table bonus
@@ -238,7 +236,6 @@ float evaluateTapered(const Board& board) {
         egScore[color] += EG_PIECE_VALUES[piece] + EG_PIECE_TABLES[pieceType][tableSquare];
     }
     
-    // Calculate relative scores (positive = good for side to move)
     int mgRelative = mgScore[board.whiteToMove ? 0 : 1] - mgScore[board.whiteToMove ? 1 : 0];
     int egRelative = egScore[board.whiteToMove ? 0 : 1] - egScore[board.whiteToMove ? 1 : 0];
     

@@ -1,5 +1,5 @@
 #pragma once
-#include "../core/board.hpp"  // Include for Piece enum
+#include "../core/board.hpp"  
 
 // piece_tables.hpp - PeSTO's Evaluation Function Tables
 // Separate file for clean organization and easy tuning
@@ -33,10 +33,14 @@ namespace PieceSquareTables {
     extern const int* MG_PIECE_TABLES[6];
     extern const int* EG_PIECE_TABLES[6];
     
-    // Utility functions (inline - can use Piece enum now)
-    inline int getPieceType(int piece) {
+    // Utility functions 
+    inline int getPieceType(int piece, bool color) {
         if (piece == EMPTY) return -1;
-        return (piece - 1) / 2;     // Converts piece enum to 0-5 range
+        if(color){
+            return (piece - 6) - 1; 
+        }
+
+        return piece - 1;
     }
     
     inline int flipSquare(int sq) {

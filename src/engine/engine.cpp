@@ -59,7 +59,7 @@ const int ChessEngine::KING_EG_TABLE[64] = {0};
 
 
 Move ChessEngine::getBestMove(const Board& board, int timelimit){
-    return getBestMove(board, maxDepth_, timeLimit_);
+    return getBestMove(board, maxDepth_, timelimit);
 }
 
 Move ChessEngine::getBestMove(const Board& board, int depth, int timeLimit){
@@ -91,7 +91,7 @@ Move ChessEngine::getBestMove(const Board& board, int depth, int timeLimit){
 
         Board testBoard = board;
         testBoard.makeMove(move);
-        testBoard.whiteToMove = !testBoard.whiteToMove;
+        testBoard.updateGameState(move);
 
         float score = -alphaBeta(testBoard, depth -1, -std::numeric_limits<float>::infinity(),
                                 std::numeric_limits<float>::infinity(), false);
@@ -136,7 +136,7 @@ float ChessEngine::alphaBeta(Board& board, int depth, float alpha, float beta, b
         for(Move& move : orderedMoves){
             Board testBoard = board;
             testBoard.makeMove(move);
-            testBoard.whiteToMove = !testBoard.whiteToMove;
+            testBoard.updateGameState(move);
 
             float eval = alphaBeta(testBoard, depth -1, alpha, beta, false);
             maxEval = std::max(maxEval, eval);
@@ -151,7 +151,7 @@ float ChessEngine::alphaBeta(Board& board, int depth, float alpha, float beta, b
         for(Move& move : orderedMoves){
             Board testBoard = board;
             testBoard.makeMove(move);
-            testBoard.whiteToMove = !testBoard.whiteToMove;
+            testBoard.updateGameState(move);
 
             float eval = alphaBeta(testBoard, depth-1, alpha, beta, true);
             minEval = std::min(minEval, eval);
@@ -349,7 +349,7 @@ float ChessEngine::quiescenceSearch(Board& board, float alpha, float beta, bool 
     for(Move& move : goodCaptures){
         Board testBoard = board;
         testBoard.makeMove(move);
-        testBoard.whiteToMove = !testBoard.whiteToMove;
+        testBoard.updateGameState(move);
 
         //recursively search this noisy position
         float score = -quiescenceSearch(testBoard, -beta, -alpha, !maximizingPlayer, qDepth+1);
