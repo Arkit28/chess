@@ -20,4 +20,17 @@ target_include_directories(chess PRIVATE
     src/
     src/core/
     src/engine/
+    tests/unit_tests/
+)
+
+#Catch2 for unit tests
+find_package(Catch2 3 REQUIRED)
+#test files
+add_executable(tests 
+    junk/test.cpp
+    tests/unit_tests/UT_board.cpp            
+)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_include_directories(tests PRIVATE
+    ${CMAKE_SOURCE_DIR}
 )
