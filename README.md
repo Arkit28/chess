@@ -1,5 +1,6 @@
 # chess
-Basic PvP and PvComputer is available. 
+
+Basic PvP and PvComputer is available.
 
 Compile with g++/gcc and run the executable in cmd to play.
 
@@ -9,7 +10,7 @@ Compile with g++/gcc and run the executable in cmd to play.
 
 ### Piece Inputs
 
-Move input syntax follows a very simple representation: 
+Move input syntax follows a very simple representation:
 
 - two characters for current square
 - two characters for target square
@@ -24,10 +25,11 @@ The notation is piece agnostic, so there is no need for separate notation for di
 
 ### General Inputs
 
-Commands for offering a draw and resgination: 
+Commands for offering a draw and resgination:
 
-- `quit`  : Forfeit the game
+- `resign`  : Forfeit the game
 - `draw?`  : Offer the opponent a draw
+- `quit`   : Quit application
 
 ---
 

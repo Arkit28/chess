@@ -6,31 +6,28 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add executable with all source files
-add_executable(chess
-    src/ChessGameLoop.cpp
+add_library(chess_lib STATIC
     src/core/board.cpp
     src/core/move.cpp
     src/core/moveGen.cpp
     src/engine/engine.cpp
     src/engine/piece_tables.cpp
 )
-
-# Include directories for headers
-target_include_directories(chess PRIVATE
+target_include_directories(chess_lib PUBLIC
     src/
     src/core/
     src/engine/
-    tests/unit_tests/
 )
+
+add_executable(chess src/ChessGameLoop.cpp)
+target_link_libraries(chess PRIVATE chess_lib)
 
 #Catch2 for unit tests
 find_package(Catch2 3 REQUIRED)
-#test files
-add_executable(tests 
-    junk/test.cpp
-    tests/unit_tests/UT_board.cpp            
+add_executable(tests
+    tests/unit_tests/board_setup.cpp
 )
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain chess_lib)
 target_include_directories(tests PRIVATE
     ${CMAKE_SOURCE_DIR}
 )
