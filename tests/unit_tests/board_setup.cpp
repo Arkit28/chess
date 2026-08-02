@@ -3,7 +3,7 @@
 
 // Test 1: initial board setup
 // Test 2: board reset after some moves are made
-// Test 3: General FEN representation is correct, pre and post move
+// Test 3: General FEN representation is correct, pre and post move 
 
 
 
@@ -102,6 +102,23 @@ SECTION( "board is reset to correct initial position", "[board]") {
     REQUIRE( testBoard.squares[61] == Piece::B_BISHOP );
     REQUIRE( testBoard.squares[62] == Piece::B_KNIGHT );
     REQUIRE( testBoard.squares[63] == Piece::B_ROOK   );
+
+}
+
+SECTION( "board's FEN is correct for pieces", "[board]" ) {
+
+    testBoard.setStartPos();
+    std::string preFEN = testBoard.toFEN();
+    REQUIRE( preFEN == "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
+    testBoard.squares[0] = EMPTY;
+    testBoard.squares[28] = W_ROOK;
+    testBoard.squares[34] = B_ROOK;
+
+    std::string postFEN = testBoard.toFEN();
+    REQUIRE( postFEN == "rnbqkbnr/pppppppp/8/2r5/4R3/8/PPPPPPPP/1NBQKBNR w Kkq - 0 1");
+
+    
 
 }
 

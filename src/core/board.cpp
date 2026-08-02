@@ -81,7 +81,7 @@ void Board::setStartPos() {
     squares[63] = B_ROOK;
 
     castlingrights = {true, true, true, true,};
-    Board::fullMoveNumber = 0;
+    Board::fullMoveNumber = 1;
     Board::halfmoveClock = 0;
     Board::enPassantSquare = -1;
     Board::whiteToMove = true;
@@ -420,85 +420,6 @@ bool Board::IsMoveLegal(const Move& move, const std::vector<Move>& legalMoves){
     return false;
 }
 
-/*
-bool Board::isSquareAttacked(int square, bool byWhite) const{
-    if(byWhite){
-        if(onBoard(square + 7) && squares[square + 7] == W_PAWN) return true;
-        if(onBoard(square + 9) && squares[square + 9] == W_PAWN) return true;
-    }
-    else{
-        if(onBoard(square - 7) && squares[square - 7] == B_PAWN) return true;
-        if(onBoard(square - 9) && squares[square - 9] == B_PAWN) return true;
-    }
-
-    int knighcurrent_squareffset[8] = {6, -6, 10, -10, 15, -15, 17, -17};
-    for(int offset : knighcurrent_squareffset){
-        int target = square + offset;
-        if(onBoard(target)){
-            int fileDiff = std::abs(file(target) - file(square));
-            int rankDiff = std::abs(rank(target) - rank(square));
-            if(!((fileDiff == 2 && rankDiff == 1) || (fileDiff == 1 && rankDiff == 2))) continue;
-            
-            if(squares[target] == W_KNIGHT && byWhite) return true;
-            if(squares[target] == B_KNIGHT && !byWhite) return true;
-        }
-    }
-
-    auto isFriendly = !byWhite
-        ? [](int piece) { return piece == B_PAWN || piece == B_KNIGHT || piece == B_BISHOP || piece == B_ROOK || piece == B_QUEEN || piece == B_KING; }
-        : [](int piece) { return piece == W_PAWN || piece == W_KNIGHT || piece == W_BISHOP || piece == W_ROOK || piece == W_QUEEN || piece == W_KING; };
-    int direction[4] = {1, -1, 8 , -8};
-    for(const auto& dir : direction){
-        int target = square + dir;
-        while(onBoard(target)){
-            if((dir == -1 || dir == 1) && rank(target) != rank (square)) break;
-
-            if(squares[target] == EMPTY){
-                target += dir;
-                continue;
-            }
-            if(isFriendly(squares[target])) break;
-            else if(squares[target] == W_ROOK || squares[target] == W_QUEEN 
-                    || squares[target] == B_ROOK || squares[target] == B_QUEEN) return true;
-            else break;
-        }
-    }
-
-    int direction1[4] = {9, -9, 7 , -7};
-    for(const auto& dir : direction1){
-        int target = square + dir;
-        while(onBoard(target)){
-            int fileDiff = std::abs(file(target) - file(target-dir));
-            if(fileDiff != 1) break;
-
-            if(squares[target] == EMPTY) {
-                target += dir;
-                continue;
-            }
-            if(isFriendly(squares[target])){
-                break;
-            }
-            if(squares[target] == W_QUEEN || squares[target] == W_BISHOP 
-               || squares[target] == B_QUEEN || squares[target] == B_BISHOP){
-                return true;
-            }
-            else break;
-        }
-    }
-
-    int offset[8] = {1, -1, 8, -8, 7, -7, 9, -9};
-    for(const auto& dir : offset){
-        int target = square + dir;
-        if(onBoard(target)){
-            if(byWhite && squares[target] == W_KING) return true;
-            if(!byWhite && squares[target] == B_KING) return true;
-        }
-    }
-
-    return false;
-
-}
-*/
 
 bool IsWhite(const int piece){
     return piece == W_BISHOP || piece == W_KING || piece == W_KNIGHT || piece == W_ROOK || piece == W_QUEEN || piece == W_PAWN;
