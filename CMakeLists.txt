@@ -26,6 +26,7 @@ target_link_libraries(chess PRIVATE chess_lib)
 find_package(Catch2 3 REQUIRED)
 add_executable(tests
     tests/unit_tests/board_setup.cpp
+    tests/unit_tests/piece_moves.cpp
 )
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain chess_lib)
 target_include_directories(tests PRIVATE

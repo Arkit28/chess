@@ -1,10 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include "src/core/board.hpp"
 
+
+
 // Test 1: initial board setup
 // Test 2: board reset after some moves are made
 // Test 3: General FEN representation is correct, pre and post move 
-
 
 
 TEST_CASE( "board initial setup adheres to standard chess rules", "[board]" ) {
@@ -117,8 +118,6 @@ SECTION( "board's FEN is correct for pieces", "[board]" ) {
 
     std::string postFEN = testBoard.toFEN();
     REQUIRE( postFEN == "rnbqkbnr/pppppppp/8/2r5/4R3/8/PPPPPPPP/1NBQKBNR w Kkq - 0 1");
-
-    
 
 }
 
