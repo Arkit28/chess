@@ -413,35 +413,35 @@ void MoveGen::addKingMoves(const Board& b, int square, bool white, std::vector<M
     
     // add castling if conditions are met
     if(white){
-        if(b.castlingrights.W_QueenSide && b.squares[1] == EMPTY && b.squares[2] == EMPTY && b.squares[3] == EMPTY
-           && !isSquareAttacked(b, 4, false)
-           && !isSquareAttacked(b, 3, false)
-           && !isSquareAttacked(b, 2, false)
-           && b.squares[0] == W_ROOK && b.squares[4] == W_KING) {
-            moves.push_back({square, 2, b.squares[square], EMPTY, MoveFlags::CASTLING});
+        if(b.castlingrights.W_QueenSide && b.squares[B1] == EMPTY && b.squares[C1] == EMPTY && b.squares[D1] == EMPTY
+           && !isSquareAttacked(b, E1, false)
+           && !isSquareAttacked(b, D1, false)
+           && !isSquareAttacked(b, C1, false)
+           && b.squares[A1] == W_ROOK && b.squares[E1] == W_KING) {
+            moves.push_back({square, C1, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
-        if(b.castlingrights.W_KingSide == true && b.squares[5] == EMPTY && b.squares[6] == EMPTY
-           && !isSquareAttacked(b, 4, false)
-           && !isSquareAttacked(b, 5, false)
-           && !isSquareAttacked(b, 6, false)
-           && b.squares[7] == W_ROOK && b.squares[4] == W_KING){
-            moves.push_back({square, 6, b.squares[square], EMPTY, MoveFlags::CASTLING});
+        if(b.castlingrights.W_KingSide == true && b.squares[F1] == EMPTY && b.squares[G1] == EMPTY
+           && !isSquareAttacked(b, E1, false)
+           && !isSquareAttacked(b, F1, false)
+           && !isSquareAttacked(b, G1, false)
+           && b.squares[H1] == W_ROOK && b.squares[E1] == W_KING){
+            moves.push_back({square, G1, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
     }
     else{
-        if(b.castlingrights.B_QueenSide == true && b.squares[57] == EMPTY && b.squares[58] == EMPTY && b.squares[59] == EMPTY
-           && !isSquareAttacked(b, 60, true)
-           && !isSquareAttacked(b, 59, true)
-           && !isSquareAttacked(b, 58, true)
-           && b.squares[56] == B_ROOK && b.squares[60] == B_KING){
-            moves.push_back({square, 58, b.squares[square], EMPTY, MoveFlags::CASTLING});
+        if(b.castlingrights.B_QueenSide == true && b.squares[B8] == EMPTY && b.squares[C8] == EMPTY && b.squares[D8] == EMPTY
+           && !isSquareAttacked(b, E8, true)
+           && !isSquareAttacked(b, D8, true)
+           && !isSquareAttacked(b, C8, true)
+           && b.squares[A8] == B_ROOK && b.squares[E8] == B_KING){
+            moves.push_back({square, C8, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
-        if(b.castlingrights.B_KingSide == true && b.squares[61] == EMPTY && b.squares[62] == EMPTY
-           && !isSquareAttacked(b, 60, true)
-           && !isSquareAttacked(b, 61, true)
-           && !isSquareAttacked(b, 62, true)
-           && b.squares[63] == B_ROOK && b.squares[60] == B_KING){
-            moves.push_back({square, 62, b.squares[square], EMPTY, MoveFlags::CASTLING});
+        if(b.castlingrights.B_KingSide == true && b.squares[F8] == EMPTY && b.squares[G8] == EMPTY
+           && !isSquareAttacked(b, E8, true)
+           && !isSquareAttacked(b, F8, true)
+           && !isSquareAttacked(b, G8, true)
+           && b.squares[H8] == B_ROOK && b.squares[E8] == B_KING){
+            moves.push_back({square, G8, b.squares[square], EMPTY, MoveFlags::CASTLING});
         }
     }
 }

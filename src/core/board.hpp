@@ -1,5 +1,6 @@
 #pragma once
 #include "move.hpp"
+#include "utils.hpp"
 #include <array>
 #include <string>
 #include <vector>

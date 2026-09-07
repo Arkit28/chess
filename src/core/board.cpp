@@ -46,39 +46,39 @@ Board::Board() {
 void Board::setStartPos() {
     squares.fill(EMPTY);
 
-    squares[0] = W_ROOK;
-    squares[1] = W_KNIGHT;
-    squares[2] = W_BISHOP;
-    squares[3] = W_QUEEN;
-    squares[4] = W_KING;
-    squares[5] = W_BISHOP;
-    squares[6] = W_KNIGHT;
-    squares[7] = W_ROOK;
-    squares[8] = W_PAWN;
-    squares[9] = W_PAWN;
-    squares[10] = W_PAWN;
-    squares[11] = W_PAWN;
-    squares[12] = W_PAWN;
-    squares[13] = W_PAWN;
-    squares[14] = W_PAWN;
-    squares[15] = W_PAWN;
+    squares[A1] = W_ROOK;
+    squares[B1] = W_KNIGHT;
+    squares[C1] = W_BISHOP;
+    squares[D1] = W_QUEEN;
+    squares[E1] = W_KING;
+    squares[F1] = W_BISHOP;
+    squares[G1] = W_KNIGHT;
+    squares[H1] = W_ROOK;
+    squares[A2] = W_PAWN;
+    squares[B2] = W_PAWN;
+    squares[C2] = W_PAWN;
+    squares[D2] = W_PAWN;
+    squares[E2] = W_PAWN;
+    squares[F2] = W_PAWN;
+    squares[G2] = W_PAWN;
+    squares[H2] = W_PAWN;
 
-    squares[48] = B_PAWN;
-    squares[49] = B_PAWN;
-    squares[50] = B_PAWN;
-    squares[51] = B_PAWN;
-    squares[52] = B_PAWN;
-    squares[53] = B_PAWN;
-    squares[54] = B_PAWN;
-    squares[55] = B_PAWN;
-    squares[56] = B_ROOK;
-    squares[57] = B_KNIGHT;
-    squares[58] = B_BISHOP;
-    squares[59] = B_QUEEN;
-    squares[60] = B_KING;
-    squares[61] = B_BISHOP;
-    squares[62] = B_KNIGHT;
-    squares[63] = B_ROOK;
+    squares[A7] = B_PAWN;
+    squares[B7] = B_PAWN;
+    squares[C7] = B_PAWN;
+    squares[D7] = B_PAWN;
+    squares[E7] = B_PAWN;
+    squares[F7] = B_PAWN;
+    squares[G7] = B_PAWN;
+    squares[H7] = B_PAWN;
+    squares[A8] = B_ROOK;
+    squares[B8] = B_KNIGHT;
+    squares[C8] = B_BISHOP;
+    squares[D8] = B_QUEEN;
+    squares[E8] = B_KING;
+    squares[F8] = B_BISHOP;
+    squares[G8] = B_KNIGHT;
+    squares[H8] = B_ROOK;
 
     castlingrights = {true, true, true, true,};
     Board::fullMoveNumber = 1;
@@ -305,33 +305,32 @@ void Board::makeMove(Move& m){
             break;
         
         case CASTLING:
-            if(m.target_square == 2){
+            if(m.target_square == C1){
                 squares[m.target_square] = W_KING;
-                squares[3] = W_ROOK;
+                squares[D1] = W_ROOK;
                 squares[m.current_square] = EMPTY;
-                squares[0] = EMPTY;
+                squares[A1] = EMPTY;
                 castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
             }
-            else if(m.target_square == 6){
+            else if(m.target_square == G1){
                 squares[m.target_square] = W_KING;
-                squares[5] = W_ROOK;
+                squares[F1] = W_ROOK;
                 squares[m.current_square] = EMPTY;
-                squares[7] = EMPTY;  
+                squares[H1] = EMPTY;
                 castlingrights.W_KingSide = castlingrights.W_QueenSide = false;
-
             }
-            else if(m.target_square == 58){
+            else if(m.target_square == C8){
                 squares[m.target_square] = B_KING;
-                squares[59] = B_ROOK;
+                squares[D8] = B_ROOK;
                 squares[m.current_square] = EMPTY;
-                squares[56] = EMPTY;
+                squares[A8] = EMPTY;
                 castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
             }
-            else if(m.target_square == 62){
+            else if(m.target_square == G8){
                 squares[m.target_square] = B_KING;
-                squares[61] = B_ROOK;
+                squares[F8] = B_ROOK;
                 squares[m.current_square] = EMPTY;
-                squares[63] = EMPTY;
+                squares[H8] = EMPTY;
                 castlingrights.B_KingSide = castlingrights.B_QueenSide = false;
             }
             break;
@@ -364,13 +363,13 @@ void Board::UpdateCastlingRights(Move& m){
         castlingrights.B_QueenSide = false;
     }
 
-    if(m.current_square == 4 || m.target_square == 4) castlingrights.W_QueenSide = false; castlingrights.W_KingSide == false;
-    if(m.current_square == 60 || m.target_square == 60) castlingrights.B_KingSide = false; castlingrights.B_QueenSide = false;
+    if(m.current_square == E1 || m.target_square == E1) castlingrights.W_QueenSide = false; castlingrights.W_KingSide == false;
+    if(m.current_square == E8 || m.target_square == E8) castlingrights.B_KingSide = false; castlingrights.B_QueenSide = false;
 
-    if(m.target_square == 0 || m.current_square == 0) castlingrights.W_KingSide = false;
-    if(m.target_square == 7 || m.current_square == 7) castlingrights.W_QueenSide = false;
-    if(m.target_square == 56 || m.current_square == 56) castlingrights.B_KingSide = false;
-    if(m.target_square == 63 || m.current_square == 63) castlingrights.B_QueenSide = false;
+    if(m.target_square == A1 || m.current_square == A1) castlingrights.W_KingSide = false;
+    if(m.target_square == H1 || m.current_square == H1) castlingrights.W_QueenSide = false;
+    if(m.target_square == A8 || m.current_square == A8) castlingrights.B_KingSide = false;
+    if(m.target_square == H8 || m.current_square == H8) castlingrights.B_QueenSide = false;
 }
 
 
